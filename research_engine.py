@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from pydantic import BaseModel, Field
 from google import genai
 from google.genai import types
@@ -41,26 +42,38 @@ def generate_researched_package(past_topics: list[str]) -> ResearchedContentPack
     ৩. মোট ৫টি দৃশ্য তৈরি করো।
     """
 
-    candidate_models = ["gemini-3.8-flash", "gemini-2.5-flash"]
+    candidate_models = [
+        "gemini-3.8-flash",
+        "gemini-3.0-flash",
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+    ]
     last_error = None
 
     for model_name in candidate_models:
-        try:
-            response = client.models.generate_content(
-                model=model_name,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    response_mime_type="application/json",
-                    response_schema=ResearchedContentPackage,
-                    temperature=0.85,
-                ),
-            )
-            data = json.loads(response.text)
-            return ResearchedContentPackage(**data)
-        except Exception as e:
-            last_error = e
-            if "404" in str(e) or "NOT_FOUND" in str(e):
-                continue
-            raise
+        for attempt in range(3):
+            try:
+                print(f"   [AI Request] মডেল: {model_name} (চেষ্টা {attempt + 1}/3)...")
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        response_schema=ResearchedContentPackage,
+                        temperature=0.85,
+                    ),
+                )
+                data = json.loads(response.text)
+                return ResearchedContentPackage(**data)
+            except Exception as e:
+                last_error = e
+                err_msg = str(e)
+                if "404" in err_msg or "NOT_FOUND" in err_msg:
+                    break  # এই মডেলটি অ্যাকাউন্টে না থাকলে পরের মডেলে যাবে
+                if any(code in err_msg for code in ["503", "UNAVAILABLE", "429", "RESOURCE_EXHAUSTED"]):
+                    print(f"   সার্ভার সাময়িকভাবে ব্যস্ত ({model_name}), ১৫ সেকেন্ড পর আবার চেষ্টা করা হচ্ছে...")
+                    time.sleep(15)
+                    continue
+                raise
 
-    raise RuntimeError(f"কোনো Gemini মডেল কাজ করেনি: {last_error}")
+    raise RuntimeError(f"সবগুলো চেষ্টা ব্যর্থ হয়েছে: {last_error}")
