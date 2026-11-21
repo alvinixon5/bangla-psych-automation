@@ -3,6 +3,7 @@ import json
 import random
 import asyncio
 import textwrap
+import subprocess
 import urllib.parse
 import requests
 import edge_tts
@@ -68,12 +69,35 @@ async def generate_voiceover(text: str, output_mp3: str):
     await communicate.save(output_mp3)
 
 
+def sanitize_stock_video(raw_input: str, clean_output: str) -> bool:
+    """Pixabay ভিডিও থেকে tmcd ডেটা ট্র্যাক সরিয়ে পরিচ্ছন্ন 30fps MP4 তৈরি করে"""
+    cmd = [
+        "ffmpeg", "-y",
+        "-i", raw_input,
+        "-t", "15",
+        "-an", "-sn", "-dn",
+        "-vf", "scale='min(1280,iw)':-2",
+        "-c:v", "libx264",
+        "-preset", "ultrafast",
+        "-crf", "23",
+        "-pix_fmt", "yuv420p",
+        "-r", "30",
+        clean_output,
+    ]
+    try:
+        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=60, check=True)
+        return os.path.exists(clean_output) and os.path.getsize(clean_output) > 10000
+    except Exception:
+        return False
+
+
 def download_unique_pixabay_video(query: str, output_mp4: str, used_ids: list[int]) -> int | None:
-    """Pixabay Free API থেকে ইউনিক HD ভিডিও ডাউনলোড করে"""
+    """Pixabay Free API থেকে ইউনিক HD ভিডিও ডাউনলোড ও ক্লিন করে"""
     api_key = os.getenv("PIXABAY_API_KEY")
     if not api_key:
         return None
 
+    temp_dl = output_mp4.replace(".mp4", "_dl.mp4")
     search_queries = [
         query,
         "dark clouds night",
@@ -98,11 +122,17 @@ def download_unique_pixabay_video(query: str, output_mp4: str, used_ids: list[in
                     if vid_url and vid_info.get("width", 0) >= 640:
                         vid_data = requests.get(vid_url, timeout=45)
                         if vid_data.status_code == 200 and len(vid_data.content) > 50000:
-                            with open(output_mp4, "wb") as f:
+                            with open(temp_dl, "wb") as f:
                                 f.write(vid_data.content)
-                            return vid_id
+                            if sanitize_stock_video(temp_dl, output_mp4):
+                                if os.path.exists(temp_dl):
+                                    os.remove(temp_dl)
+                                return vid_id
         except Exception:
             continue
+        finally:
+            if os.path.exists(temp_dl):
+                os.remove(temp_dl)
     return None
 
 
@@ -139,7 +169,6 @@ def generate_keyless_ai_clip(query: str, duration: float, output_mp4: str):
         if res.status_code == 200 and len(res.content) > 10000:
             with open(img_path, "wb") as f:
                 f.write(res.content)
-            # ইমেজ ফাইলটি বৈধ কি না যাচাই করা
             with Image.open(img_path) as test_im:
                 if test_im.width < 100 or test_im.height < 100:
                     raise ValueError("Invalid image size")
@@ -148,9 +177,18 @@ def generate_keyless_ai_clip(query: str, duration: float, output_mp4: str):
     except Exception:
         create_dark_gradient_canvas(1080, 1920, img_path)
 
-    clip = ImageClip(img_path).with_duration(duration)
-    clip.write_videofile(output_mp4, fps=30, codec="libx264", audio=False, logger=None)
-    clip.close()
+    cmd = [
+        "ffmpeg", "-y",
+        "-loop", "1",
+        "-i", img_path,
+        "-t", f"{duration:.2f}",
+        "-c:v", "libx264",
+        "-preset", "ultrafast",
+        "-pix_fmt", "yuv420p",
+        "-r", "30",
+        output_mp4,
+    ]
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=45, check=True)
 
 
 def create_branded_thumbnail(raw_vid_path: str, hook_text: str, width: int, height: int, output_jpg: str):
@@ -318,7 +356,7 @@ def render_resolution_variant(assets: list[dict], width: int, height: int, outpu
         fps=30,
         codec="libx264",
         audio_codec="aac",
-        preset="medium",
+        preset="veryfast",
         threads=4,
     )
     final_video.close()
