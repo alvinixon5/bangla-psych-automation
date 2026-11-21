@@ -74,13 +74,19 @@ def download_unique_pixabay_video(query: str, output_mp4: str, used_ids: list[in
     if not api_key:
         return None
 
-    search_queries = [query, "stressed person night", "thinking dark", "brain mind"]
+    search_queries = [
+        query,
+        "dark clouds night",
+        "city night lights",
+        "rain window night",
+        "ocean waves dark",
+    ]
     for q in search_queries:
         encoded_q = urllib.parse.quote_plus(q)
-        page = random.randint(1, 3)
+        page = random.randint(1, 2)
         url = f"https://pixabay.com/api/videos/?key={api_key}&q={encoded_q}&per_page=15&page={page}"
         try:
-            res = requests.get(url, timeout=20).json()
+            res = requests.get(url, timeout=15).json()
             for hit in res.get("hits", []):
                 vid_id = hit.get("id")
                 if vid_id in used_ids:
@@ -90,8 +96,8 @@ def download_unique_pixabay_video(query: str, output_mp4: str, used_ids: list[in
                     vid_info = videos.get(quality, {})
                     vid_url = vid_info.get("url")
                     if vid_url and vid_info.get("width", 0) >= 640:
-                        vid_data = requests.get(vid_url, timeout=60)
-                        if vid_data.status_code == 200:
+                        vid_data = requests.get(vid_url, timeout=45)
+                        if vid_data.status_code == 200 and len(vid_data.content) > 50000:
                             with open(output_mp4, "wb") as f:
                                 f.write(vid_data.content)
                             return vid_id
@@ -100,25 +106,47 @@ def download_unique_pixabay_video(query: str, output_mp4: str, used_ids: list[in
     return None
 
 
+def create_dark_gradient_canvas(width: int, height: int, output_jpg: str):
+    """অবসিডিয়ান ও অ্যাম্বার-গোল্ড আভাযুক্ত ডার্ক ব্যাকগ্রাউন্ড তৈরি করে"""
+    img = Image.new("RGB", (width, height), COLOR_OBSIDIAN)
+    draw = ImageDraw.Draw(img)
+    cx, cy = width // 2, height // 2
+    max_r = max(width, height) // 2
+    for step in range(40, 0, -1):
+        ratio = step / 40.0
+        r = int(max_r * ratio)
+        glow = 1.0 - ratio
+        color = (
+            int(COLOR_OBSIDIAN[0] + (35 * glow)),
+            int(COLOR_OBSIDIAN[1] + (28 * glow)),
+            int(COLOR_OBSIDIAN[2] + (22 * glow)),
+        )
+        draw.ellipse([(cx - r, cy - r), (cx + r, cy + r)], fill=color)
+    img.save(output_jpg, quality=92)
+
+
 def generate_keyless_ai_clip(query: str, duration: float, output_mp4: str):
-    """Pixabay ভিডিও না পেলে বা API Key না থাকলে কাস্টম ডার্ক সাইকোলজি AI ইমেজ ক্লিপ তৈরি করে"""
+    """Pixabay ভিডিও না পেলে কাস্টম ডার্ক সাইকোলজি AI ইমেজ বা ডার্ক ক্যানভাস ক্লিপ তৈরি করে"""
     prompt = urllib.parse.quote(
-        f"cinematic dark moody psychology scene, {query}, deep obsidian #0B0F19 and amber gold #F59E0B rim lighting, photorealistic, no text"
+        f"cinematic dark moody psychology scene, {query}, deep obsidian and warm amber rim lighting, photorealistic, no text"
     )
     seed = random.randint(1, 999999)
     img_url = f"https://image.pollinations.ai/prompt/{prompt}?width=1080&height=1920&seed={seed}&nologo=true"
     img_path = output_mp4.replace(".mp4", ".jpg")
 
     try:
-        res = requests.get(img_url, timeout=45)
-        if res.status_code == 200 and len(res.content) > 5000:
+        res = requests.get(img_url, timeout=15)
+        if res.status_code == 200 and len(res.content) > 10000:
             with open(img_path, "wb") as f:
                 f.write(res.content)
+            # ইমেজ ফাইলটি বৈধ কি না যাচাই করা
+            with Image.open(img_path) as test_im:
+                if test_im.width < 100 or test_im.height < 100:
+                    raise ValueError("Invalid image size")
         else:
-            raise ValueError("Fallback to solid dark canvas")
+            raise ValueError("Fallback to dark gradient canvas")
     except Exception:
-        fallback_img = Image.new("RGB", (1080, 1920), COLOR_OBSIDIAN)
-        fallback_img.save(img_path)
+        create_dark_gradient_canvas(1080, 1920, img_path)
 
     clip = ImageClip(img_path).with_duration(duration)
     clip.write_videofile(output_mp4, fps=30, codec="libx264", audio=False, logger=None)
@@ -133,8 +161,9 @@ def create_branded_thumbnail(raw_vid_path: str, hook_text: str, width: int, heig
         clip.save_frame(temp_frame, t=t_capture)
 
     bg = Image.open(temp_frame).convert("RGB")
-    scale = max(width / bg.width, height / bg.height)
-    new_w, new_h = int(bg.width * scale), int(bg.height * scale)
+    scale = max(width / max(1, bg.width), height / max(1, bg.height))
+    new_w = max(width, int(bg.width * scale))
+    new_h = max(height, int(bg.height * scale))
     bg = bg.resize((new_w, new_h), Image.Resampling.LANCZOS)
     left = (new_w - width) // 2
     top = (new_h - height) // 2
@@ -183,7 +212,7 @@ def create_overlay_frame(text: str, width: int, height: int, progress: float, ou
 
     bar_h = 12
     draw.rectangle([(0, 0), (width, bar_h)], fill=(255, 255, 255, 45))
-    draw.rectangle([(0, 0), (int(width * progress), bar_h)], fill=(*COLOR_AMBER, 255))
+    draw.rectangle([(0, 0), (max(2, int(width * progress)), bar_h)], fill=(*COLOR_AMBER, 255))
 
     font_size = 54 if width == height else 58
     wrap_chars = 20 if width == height else 22
@@ -225,7 +254,7 @@ def prepare_assets(pkg: ResearchedContentPackage, used_video_ids: list[int]) -> 
 
         asyncio.run(generate_voiceover(scene.narration, audio_path))
         with AudioFileClip(audio_path) as ac:
-            dur = ac.duration + 0.2
+            dur = max(1.5, ac.duration + 0.2)
 
         vid_id = download_unique_pixabay_video(scene.pixabay_query, raw_vid_path, used_video_ids)
         if vid_id:
@@ -251,24 +280,28 @@ def render_resolution_variant(assets: list[dict], width: int, height: int, outpu
         idx = item["idx"]
         audio_clip = AudioFileClip(item["audio_path"])
         open_resources.append(audio_clip)
-        dur = audio_clip.duration + 0.15
+        dur = max(1.5, audio_clip.duration + 0.15)
 
         base_vid = VideoFileClip(item["raw_vid_path"]).without_audio()
         open_resources.append(base_vid)
 
-        scale = max(width / base_vid.w, height / base_vid.h)
-        vid_clip = base_vid.resized(scale).cropped(
-            x_center=base_vid.w / 2,
-            y_center=base_vid.h / 2,
+        src_w = max(2, base_vid.w)
+        src_h = max(2, base_vid.h)
+        scale = max(width / src_w, height / src_h)
+        target_w = max(width, int(round(src_w * scale)))
+        target_h = max(height, int(round(src_h * scale)))
+
+        vid_clip = base_vid.resized((target_w, target_h)).cropped(
+            x_center=target_w / 2,
+            y_center=target_h / 2,
             width=width,
             height=height,
         )
 
         if vid_clip.duration < dur:
-            repeats = int(dur // vid_clip.duration) + 2
+            repeats = int(dur // max(0.5, vid_clip.duration)) + 2
             vid_clip = concatenate_videoclips([vid_clip] * repeats)
         vid_clip = vid_clip.subclipped(0, dur)
-        vid_clip = vid_clip.resized(lambda t: 1.0 + 0.04 * (t / dur))
 
         overlay_path = f"temp/overlay_{width}x{height}_{idx}.png"
         progress = (idx + 1) / total_scenes
