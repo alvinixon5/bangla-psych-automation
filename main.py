@@ -22,7 +22,7 @@ from uploader import publish_all
 VOICE = "bn-BD-NabanitaNeural"
 HISTORY_FILE = "history.json"
 BGM_FILE = "bgm.mp3"
-BGM_VOLUME = 0.12  # ভয়েসওভার স্পষ্ট রাখতে ব্যাকগ্রাউন্ড মিউজিক ১২% ভলিউমে চলবে
+BGM_VOLUME = 0.14  # ভয়েসওভার স্পষ্ট রাখতে ব্যাকগ্রাউন্ড মিউজিক ১২% ভলিউমে চলবে
 
 # Mind Decode Bangla প্রিমিয়াম ডার্ক সাইকোলজি কালার প্যালেট
 COLOR_OBSIDIAN = (11, 15, 25)       # #0B0F19
