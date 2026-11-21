@@ -19,7 +19,7 @@ from moviepy import (
 from research_engine import generate_researched_package, ResearchedContentPackage
 from uploader import publish_all
 
-VOICE = "bn-BD-NabanitaNeural"
+VOICE = "bn-BD-PradeepNeural"
 HISTORY_FILE = "history.json"
 BGM_FILE = "bgm.mp3"
 BGM_VOLUME = 0.14  # ভয়েসওভার স্পষ্ট রাখতে ব্যাকগ্রাউন্ড মিউজিক ১২% ভলিউমে চলবে
