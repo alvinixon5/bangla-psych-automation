@@ -1,4 +1,5 @@
 import os
+import glob
 import json
 import random
 import asyncio
@@ -38,13 +39,32 @@ VARIANTS = {
 
 
 def get_bengali_font(size: int) -> ImageFont.FreeTypeFont:
+    """সিস্টেম বা ডাউনলোড করা বাংলা TTF ফন্ট খুঁজে বের করে (কখনো ইংরেজি ডিফল্ট ফন্টে যাবে না)"""
     candidates = [
+        "fonts/BanglaBold.ttf",
+        "/usr/share/fonts/truetype/lohit-bengali/Lohit-Bengali.ttf",
         "/usr/share/fonts/truetype/noto/NotoSansBengali-Bold.ttf",
         "/usr/share/fonts/truetype/noto/NotoSansBengali-Regular.ttf",
     ]
+    candidates.extend(glob.glob("/usr/share/fonts/**/*Bengali*.ttf", recursive=True))
+    candidates.extend(glob.glob("/usr/share/fonts/**/*lohit*bn*.ttf", recursive=True))
+
     for path in candidates:
-        if os.path.exists(path):
-            return ImageFont.truetype(path, size)
+        if os.path.exists(path) and os.path.getsize(path) > 10000:
+            try:
+                return ImageFont.truetype(path, size)
+            except Exception:
+                continue
+
+    try:
+        fc_path = subprocess.check_output(
+            ["fc-match", "-f", "%{file}", ":lang=bn"], text=True
+        ).strip()
+        if fc_path and os.path.exists(fc_path):
+            return ImageFont.truetype(fc_path, size)
+    except Exception:
+        pass
+
     return ImageFont.load_default()
 
 
@@ -129,7 +149,7 @@ def mix_bgm_with_video(pre_bgm_mp4: str, bgm_path: str | None, final_output_mp4:
                 os.remove(pre_bgm_mp4)
             return
     except Exception as e:
-        print(f"   BGM মিক্সিং স্কিপ করা হয়েছে (মূল ভয়েসওভার রাখা হচ্ছে): {e}")
+        print(f"   BGM মিক্সিং স্কিপ করা হয়েছে: {e}")
 
     if os.path.exists(pre_bgm_mp4):
         os.replace(pre_bgm_mp4, final_output_mp4)
@@ -158,7 +178,7 @@ def sanitize_stock_video(raw_input: str, clean_output: str) -> bool:
 
 
 def download_unique_pixabay_video(query: str, output_mp4: str, used_ids: list[int]) -> int | None:
-    """Pixabay Free API থেকে ইউনিক HD ভিডিও ডাউনলোড ও ক্লিন করে"""
+    """Pixabay Free API থেকে ইউনিক HD ভিডিও ডাউনলোড ও ক্লিন করে (লম্বা ভিডিও অগ্রাধিকার পায়)"""
     api_key = os.getenv("PIXABAY_API_KEY")
     if not api_key:
         return None
@@ -177,7 +197,16 @@ def download_unique_pixabay_video(query: str, output_mp4: str, used_ids: list[in
         url = f"https://pixabay.com/api/videos/?key={api_key}&q={encoded_q}&per_page=15&page={page}"
         try:
             res = requests.get(url, timeout=15).json()
-            for hit in res.get("hits", []):
+            hits = res.get("hits", [])
+            # লম্বা (vertical) ভিডিও থাকলে আগে নেবে
+            hits.sort(
+                key=lambda h: (
+                    h.get("videos", {}).get("medium", {}).get("height", 0)
+                    > h.get("videos", {}).get("medium", {}).get("width", 0)
+                ),
+                reverse=True,
+            )
+            for hit in hits:
                 vid_id = hit.get("id")
                 if vid_id in used_ids:
                     continue
@@ -308,32 +337,51 @@ def create_branded_thumbnail(raw_vid_path: str, hook_text: str, width: int, heig
     canvas.convert("RGB").save(output_jpg, quality=95)
 
 
-def create_overlay_frame(text: str, width: int, height: int, progress: float, output_png: str):
+def create_overlay_frame(
+    text: str,
+    width: int,
+    height: int,
+    progress: float,
+    output_png: str,
+    fg_bounds: tuple[int, int] | None = None,
+):
     img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
-    draw.rectangle([(0, 0), (width, height)], fill=(*COLOR_OBSIDIAN, 95))
+    # ফ্রেমড লেআউট হলে ব্যাকগ্রাউন্ড গাঢ় করে আসল ভিডিও ফ্রেমটি স্বচ্ছ রাখবে
+    if fg_bounds:
+        fg_top, fg_bottom = fg_bounds
+        draw.rectangle([(0, 0), (width, fg_top)], fill=(*COLOR_OBSIDIAN, 195))
+        draw.rectangle([(0, fg_bottom), (width, height)], fill=(*COLOR_OBSIDIAN, 195))
+        # ভিডিও ফ্রেমের উপরে ও নিচে অ্যাম্বার অ্যাকসেন্ট লাইন
+        draw.line([(0, fg_top), (width, fg_top)], fill=(*COLOR_AMBER, 220), width=4)
+        draw.line([(0, fg_bottom), (width, fg_bottom)], fill=(*COLOR_AMBER, 220), width=4)
+        card_center_y = fg_bottom + int((height - fg_bottom) * 0.36)
+    else:
+        draw.rectangle([(0, 0), (width, height)], fill=(*COLOR_OBSIDIAN, 90))
+        card_center_y = int(height * 0.58) if height > width else int(height * 0.52)
 
+    # উপরের প্রোগ্রেস বার
     bar_h = 12
     draw.rectangle([(0, 0), (width, bar_h)], fill=(255, 255, 255, 45))
     draw.rectangle([(0, 0), (max(2, int(width * progress)), bar_h)], fill=(*COLOR_AMBER, 255))
 
-    font_size = 54 if width == height else 58
+    font_size = 52 if width == height else 56
     wrap_chars = 20 if width == height else 22
     font = get_bengali_font(font_size)
     wrapped_lines = textwrap.wrap(text, width=wrap_chars)
 
-    line_height = int(font_size * 1.42)
+    line_height = int(font_size * 1.45)
     total_text_h = len(wrapped_lines) * line_height
-    pad = 40
-    box_top = (height // 2) - (total_text_h // 2) - pad
-    box_bottom = (height // 2) + (total_text_h // 2) + pad
+    pad = 36
+    box_top = card_center_y - (total_text_h // 2) - pad
+    box_bottom = card_center_y + (total_text_h // 2) + pad
 
     draw.rounded_rectangle(
-        [(65, box_top), (width - 65, box_bottom)],
-        radius=28,
-        fill=(*COLOR_SLATE, 215),
-        outline=(*COLOR_AMBER, 235),
+        [(60, box_top), (width - 60, box_bottom)],
+        radius=26,
+        fill=(*COLOR_SLATE, 225),
+        outline=(*COLOR_AMBER, 240),
         width=4,
     )
 
@@ -375,6 +423,13 @@ def prepare_assets(pkg: ResearchedContentPackage, used_video_ids: list[int]) -> 
     return assets
 
 
+def _loop_and_trim(clip, dur: float):
+    if clip.duration < dur:
+        repeats = int(dur // max(0.5, clip.duration)) + 2
+        clip = concatenate_videoclips([clip] * repeats)
+    return clip.subclipped(0, dur)
+
+
 def render_resolution_variant(assets: list[dict], width: int, height: int, output_file: str, bgm_path: str | None):
     scene_clips = []
     open_resources = []
@@ -391,29 +446,61 @@ def render_resolution_variant(assets: list[dict], width: int, height: int, outpu
 
         src_w = max(2, base_vid.w)
         src_h = max(2, base_vid.h)
-        scale = max(width / src_w, height / src_h)
-        target_w = max(width, int(round(src_w * scale)))
-        target_h = max(height, int(round(src_h * scale)))
-
-        vid_clip = base_vid.resized((target_w, target_h)).cropped(
-            x_center=target_w / 2,
-            y_center=target_h / 2,
-            width=width,
-            height=height,
-        )
-
-        if vid_clip.duration < dur:
-            repeats = int(dur // max(0.5, vid_clip.duration)) + 2
-            vid_clip = concatenate_videoclips([vid_clip] * repeats)
-        vid_clip = vid_clip.subclipped(0, dur)
+        target_ratio = height / width
+        src_ratio = src_h / src_w
 
         overlay_path = f"temp/overlay_{width}x{height}_{idx}.png"
         progress = (idx + 1) / total_scenes
-        create_overlay_frame(item["screen_text"], width, height, progress, overlay_path)
-        txt_clip = ImageClip(overlay_path).with_duration(dur)
-        open_resources.append(txt_clip)
 
-        composed = CompositeVideoClip([vid_clip, txt_clip], size=(width, height)).with_audio(audio_clip)
+        # আড়াআড়ি (16:9) ভিডিও লম্বা (9:16 বা 4:5) স্ক্রিনে গেলে জুম না করে স্মার্ট ফ্রেমড লেআউট বানাবে
+        if target_ratio / src_ratio > 1.35:
+            bg_scale = max(width / src_w, height / src_h)
+            bg_w = max(width, int(round(src_w * bg_scale)))
+            bg_h = max(height, int(round(src_h * bg_scale)))
+
+            bg_clip = (
+                base_vid.resized((bg_w, bg_h))
+                .cropped(x_center=bg_w / 2, y_center=bg_h / 2, width=width, height=height)
+                .resized((max(16, width // 18), max(16, height // 18)))
+                .resized((width, height))
+            )
+            bg_clip = _loop_and_trim(bg_clip, dur)
+
+            fg_w = width
+            fg_h = max(2, int(round(width * src_ratio)))
+            if fg_h % 2 != 0:
+                fg_h += 1
+            fg_y = int(height * 0.17) if height > width * 1.5 else int(height * 0.10)
+
+            fg_clip = base_vid.resized((fg_w, fg_h))
+            fg_clip = _loop_and_trim(fg_clip, dur).with_position(("center", fg_y))
+
+            create_overlay_frame(
+                item["screen_text"], width, height, progress, overlay_path, fg_bounds=(fg_y, fg_y + fg_h)
+            )
+            txt_clip = ImageClip(overlay_path).with_duration(dur)
+            open_resources.append(txt_clip)
+
+            composed = CompositeVideoClip([bg_clip, fg_clip, txt_clip], size=(width, height)).with_audio(audio_clip)
+        else:
+            scale = max(width / src_w, height / src_h)
+            target_w = max(width, int(round(src_w * scale)))
+            target_h = max(height, int(round(src_h * scale)))
+
+            vid_clip = base_vid.resized((target_w, target_h)).cropped(
+                x_center=target_w / 2,
+                y_center=target_h / 2,
+                width=width,
+                height=height,
+            )
+            vid_clip = _loop_and_trim(vid_clip, dur)
+
+            create_overlay_frame(item["screen_text"], width, height, progress, overlay_path, fg_bounds=None)
+            txt_clip = ImageClip(overlay_path).with_duration(dur)
+            open_resources.append(txt_clip)
+
+            composed = CompositeVideoClip([vid_clip, txt_clip], size=(width, height)).with_audio(audio_clip)
+
         scene_clips.append(composed)
 
     pre_bgm_output = f"temp/pre_bgm_{output_file}"
