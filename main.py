@@ -103,7 +103,7 @@ def save_history(history: dict):
 
 
 async def generate_voiceover(text: str, output_mp3: str):
-    communicate = edge_tts.Communicate(text, VOICE, rate="+4%")
+    communicate = edge_tts.Communicate(text, VOICE, rate="-5%", pitch="-3Hz")
     await communicate.save(output_mp3)
 
 
