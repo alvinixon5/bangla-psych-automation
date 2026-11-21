@@ -44,16 +44,14 @@ def generate_researched_package(past_topics: list[str]) -> ResearchedContentPack
 
     candidate_models = [
         "gemini-3.8-flash",
-        "gemini-3.0-flash",
-        "gemini-2.5-flash",
-        "gemini-2.5-flash-lite",
+        "gemini-3.5-flash-lite",
     ]
     last_error = None
 
-    for model_name in candidate_models:
-        for attempt in range(3):
+    for round_num in range(1, 5):
+        for model_name in candidate_models:
             try:
-                print(f"   [AI Request] মডেল: {model_name} (চেষ্টা {attempt + 1}/3)...")
+                print(f"   [AI Request] রাউন্ড {round_num}/4 - মডেল: {model_name}...")
                 response = client.models.generate_content(
                     model=model_name,
                     contents=prompt,
@@ -68,12 +66,15 @@ def generate_researched_package(past_topics: list[str]) -> ResearchedContentPack
             except Exception as e:
                 last_error = e
                 err_msg = str(e)
-                if "404" in err_msg or "NOT_FOUND" in err_msg:
-                    break  # এই মডেলটি অ্যাকাউন্টে না থাকলে পরের মডেলে যাবে
                 if any(code in err_msg for code in ["503", "UNAVAILABLE", "429", "RESOURCE_EXHAUSTED"]):
-                    print(f"   সার্ভার সাময়িকভাবে ব্যস্ত ({model_name}), ১৫ সেকেন্ড পর আবার চেষ্টা করা হচ্ছে...")
-                    time.sleep(15)
+                    print(f"   {model_name} ব্যস্ত আছে, পরের ব্যাকআপ মডেলে সুইচ করা হচ্ছে...")
+                    continue
+                if "404" in err_msg or "NOT_FOUND" in err_msg:
                     continue
                 raise
+
+        if round_num < 4:
+            print("   সব মডেল সাময়িকভাবে ব্যস্ত, ২০ সেকেন্ড পর আবার চেষ্টা করা হচ্ছে...")
+            time.sleep(20)
 
     raise RuntimeError(f"সবগুলো চেষ্টা ব্যর্থ হয়েছে: {last_error}")
