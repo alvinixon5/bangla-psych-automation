@@ -20,6 +20,8 @@ from uploader import publish_all
 
 VOICE = "bn-BD-NabanitaNeural"
 HISTORY_FILE = "history.json"
+BGM_FILE = "bgm.mp3"
+BGM_VOLUME = 0.12  # ভয়েসওভার স্পষ্ট রাখতে ব্যাকগ্রাউন্ড মিউজিক ১২% ভলিউমে চলবে
 
 # Mind Decode Bangla ব্র্যান্ড কালার প্যালেট
 COLOR_OBSIDIAN = (11, 15, 25)       # #0B0F19
@@ -67,6 +69,70 @@ def save_history(history: dict):
 async def generate_voiceover(text: str, output_mp3: str):
     communicate = edge_tts.Communicate(text, VOICE, rate="+4%")
     await communicate.save(output_mp3)
+
+
+def prepare_bgm_track() -> str | None:
+    """রিপোজিটরিতে bgm.mp3 থাকলে সেটি নেয়, নাহলে কপিরাইট-ফ্রি ডার্ক অ্যাম্বিয়েন্ট সুর তৈরি করে"""
+    if os.path.exists(BGM_FILE) and os.path.getsize(BGM_FILE) > 5000:
+        print(f"   কাস্টম ব্যাকগ্রাউন্ড মিউজিক পাওয়া গেছে: {BGM_FILE}")
+        return BGM_FILE
+
+    os.makedirs("temp", exist_ok=True)
+    auto_bgm = "temp/auto_ambient_bgm.mp3"
+    cmd = [
+        "ffmpeg", "-y",
+        "-f", "lavfi",
+        "-i", "aevalsrc=0.16*sin(2*PI*110*t)+0.11*sin(2*PI*164.81*t)+0.08*sin(2*PI*220*t)+0.05*sin(2*PI*329.63*t):s=44100:d=60",
+        "-af", "lowpass=f=420,afade=t=in:st=0:d=2,afade=t=out:st=57:d=3",
+        "-c:a", "libmp3lame",
+        "-q:a", "4",
+        auto_bgm,
+    ]
+    try:
+        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=30, check=True)
+        if os.path.exists(auto_bgm) and os.path.getsize(auto_bgm) > 5000:
+            print("   অটোমেটিক ডার্ক অ্যাম্বিয়েন্ট ব্যাকগ্রাউন্ড মিউজিক তৈরি হয়েছে।")
+            return auto_bgm
+    except Exception:
+        pass
+    return None
+
+
+def mix_bgm_with_video(pre_bgm_mp4: str, bgm_path: str | None, final_output_mp4: str):
+    """ভয়েসওভার স্পষ্ট রেখে নিচে হালকা ভলিউমে ব্যাকগ্রাউন্ড মিউজিক মিক্স করে"""
+    if not bgm_path or not os.path.exists(bgm_path):
+        os.replace(pre_bgm_mp4, final_output_mp4)
+        return
+
+    filter_complex = (
+        f"[0:a]volume=1.05[vo];"
+        f"[1:a]volume={BGM_VOLUME}[bg];"
+        f"[vo][bg]amix=inputs=2:duration=first:dropout_transition=2:normalize=0[aout]"
+    )
+    cmd = [
+        "ffmpeg", "-y",
+        "-i", pre_bgm_mp4,
+        "-stream_loop", "-1",
+        "-i", bgm_path,
+        "-filter_complex", filter_complex,
+        "-map", "0:v",
+        "-map", "[aout]",
+        "-c:v", "copy",
+        "-c:a", "aac",
+        "-b:a", "192k",
+        final_output_mp4,
+    ]
+    try:
+        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=90, check=True)
+        if os.path.exists(final_output_mp4) and os.path.getsize(final_output_mp4) > 10000:
+            if os.path.exists(pre_bgm_mp4):
+                os.remove(pre_bgm_mp4)
+            return
+    except Exception as e:
+        print(f"   BGM মিক্সিং স্কিপ করা হয়েছে (মূল ভয়েসওভার রাখা হচ্ছে): {e}")
+
+    if os.path.exists(pre_bgm_mp4):
+        os.replace(pre_bgm_mp4, final_output_mp4)
 
 
 def sanitize_stock_video(raw_input: str, clean_output: str) -> bool:
@@ -309,7 +375,7 @@ def prepare_assets(pkg: ResearchedContentPackage, used_video_ids: list[int]) -> 
     return assets
 
 
-def render_resolution_variant(assets: list[dict], width: int, height: int, output_file: str):
+def render_resolution_variant(assets: list[dict], width: int, height: int, output_file: str, bgm_path: str | None):
     scene_clips = []
     open_resources = []
     total_scenes = len(assets)
@@ -350,9 +416,10 @@ def render_resolution_variant(assets: list[dict], width: int, height: int, outpu
         composed = CompositeVideoClip([vid_clip, txt_clip], size=(width, height)).with_audio(audio_clip)
         scene_clips.append(composed)
 
+    pre_bgm_output = f"temp/pre_bgm_{output_file}"
     final_video = concatenate_videoclips(scene_clips, method="compose")
     final_video.write_videofile(
-        output_file,
+        pre_bgm_output,
         fps=30,
         codec="libx264",
         audio_codec="aac",
@@ -362,6 +429,8 @@ def render_resolution_variant(assets: list[dict], width: int, height: int, outpu
     final_video.close()
     for res in open_resources:
         res.close()
+
+    mix_bgm_with_video(pre_bgm_output, bgm_path, output_file)
 
 
 if __name__ == "__main__":
@@ -373,6 +442,7 @@ if __name__ == "__main__":
 
     print("২. বাংলা মেয়ে ভয়েসওভার ও ইউনিক ভিজ্যুয়াল তৈরি হচ্ছে...")
     assets = prepare_assets(pkg, history["pixabay_ids"])
+    bgm_track = prepare_bgm_track()
 
     print("৩. Mind Decode Bangla ব্র্যান্ড থাম্বনেইল তৈরি হচ্ছে...")
     thumb_yt = "thumb_yt.jpg"
@@ -380,8 +450,8 @@ if __name__ == "__main__":
 
     rendered_files = {"thumb_yt": thumb_yt}
     for variant_name, (w, h, filename) in VARIANTS.items():
-        print(f"৪. রেন্ডার হচ্ছে [{variant_name} -> {w}x{h}]...")
-        render_resolution_variant(assets, w, h, filename)
+        print(f"৪. রেন্ডার ও BGM মিক্স হচ্ছে [{variant_name} -> {w}x{h}]...")
+        render_resolution_variant(assets, w, h, filename, bgm_track)
         rendered_files[variant_name] = filename
 
     print("৫. YouTube, Facebook ও X-এ SEO টাইটেল ও ক্যাপশনসহ আপলোড হচ্ছে...")
