@@ -41,15 +41,26 @@ def generate_researched_package(past_topics: list[str]) -> ResearchedContentPack
     ৩. মোট ৫টি দৃশ্য তৈরি করো।
     """
 
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            response_mime_type="application/json",
-            response_schema=ResearchedContentPackage,
-            temperature=0.85,
-        ),
-    )
+    candidate_models = ["gemini-3.8-flash", "gemini-2.5-flash"]
+    last_error = None
 
-    data = json.loads(response.text)
-    return ResearchedContentPackage(**data)
+    for model_name in candidate_models:
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=ResearchedContentPackage,
+                    temperature=0.85,
+                ),
+            )
+            data = json.loads(response.text)
+            return ResearchedContentPackage(**data)
+        except Exception as e:
+            last_error = e
+            if "404" in str(e) or "NOT_FOUND" in str(e):
+                continue
+            raise
+
+    raise RuntimeError(f"কোনো Gemini মডেল কাজ করেনি: {last_error}")
