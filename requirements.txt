@@ -1,1 +1,10 @@
-
+google-genai
+pydantic
+edge-tts
+moviepy>=2.0.0
+Pillow
+requests
+google-api-python-client
+google-auth
+google-auth-oauthlib
+tweepy
