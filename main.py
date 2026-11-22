@@ -35,7 +35,6 @@ COLOR_MUTED = (148, 163, 184)       # #94A3B8
 VARIANTS = {
     "vertical_9x16": (1080, 1920, "video_yt.mp4"),   # YouTube Shorts
     "portrait_4x5": (1080, 1350, "video_fb.mp4"),    # Facebook Page / Reels
-    "square_1x1": (1080, 1080, "video_x.mp4"),       # X (Twitter)
 }
 
 
