@@ -19,7 +19,7 @@ from moviepy import (
 from research_engine import generate_researched_package, ResearchedContentPackage
 from uploader import publish_all
 
-VOICE = "bn-BD-PradeepNeural"
+VOICE = "bn-BD-NabanitaNeural"
 HISTORY_FILE = "history.json"
 BGM_FILE = "bgm.mp3"
 BGM_VOLUME = 0.14  # ভয়েসওভার স্পষ্ট রাখতে ব্যাকগ্রাউন্ড মিউজিক ১২% ভলিউমে চলবে
@@ -102,9 +102,8 @@ def save_history(history: dict):
 
 
 async def generate_voiceover(text: str, output_mp3: str):
-    communicate = edge_tts.Communicate(text, VOICE, rate="-5%", pitch="-3Hz")
+    communicate = edge_tts.Communicate(text, VOICE, rate="-6%", pitch="+5%")
     await communicate.save(output_mp3)
-
 
 def prepare_bgm_track() -> str | None:
     """রিপোজিটরিতে bgm.mp3 থাকলে সেটি নেয়, নাহলে গভীর ডার্ক অ্যাম্বিয়েন্ট প্যাড তৈরি করে"""
