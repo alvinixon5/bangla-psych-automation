@@ -1,53 +1,841 @@
 [
   {
-    "topic_slug": "silent-people-observe-everything",
-    "research_insight": "যারা কম কথা বলে তারা কেন অন্যদের চেয়ে বেশি তথ্য ও মানুষের আসল উদ্দেশ্য ধরে ফেলতে পারে",
-    "thumbnail_hook": "নীরব মানুষদের ভয় পাবেন কেন?",
-    "yt_title": "যারা কম কথা বলে, তাদের কখনো বোকা ভাববেন না #Shorts",
-    "yt_description": "মানুষ যখন কম কথা বলে, তখন তার মস্তিষ্ক সবচেয়ে বেশি সক্রিয় থাকে। জানুন নীরব মানুষদের গোপন সাইকোলজি। #MindDecodeBangla #PsychologyBangla #Shorts",
-    "yt_tags": ["Bangla Psychology", "Human Behavior", "Mind Decode Bangla", "Silent People Psychology", "Shorts"],
-    "fb_caption": "আপনার আশেপাশে কি এমন কোনো মানুষ আছে যে খুব কম কথা বলে, কিন্তু সবকিছুই বুঝে ফেলে? কমেন্টে জানান! #MindDecodeBangla #PsychologyFacts",
-    "x_post": "যারা কম কথা বলে, তারা দুর্বল নয়—বরং তারা আপনার প্রতিটি পদক্ষেপ নীরবে পর্যবেক্ষণ করছে। #MindDecodeBangla #Psychology",
+    "topic_slug": "spotlight-effect-everyone-is-watching",
+    "research_insight": "স্পটলাইট ইফেক্ট: আমরা ভাবি আমাদের ভুল, পোশাক বা অস্বস্তি সবাই খেয়াল করছে, অথচ বাস্তবে মানুষ নিজের চিন্তাতেই ডুবে থাকে। ২০০০ সালের গিলোভিচের গবেষণায় অংশগ্রহণকারীরা ভেবেছিল প্রায় অর্ধেক মানুষ তাদের অদ্ভুত টি-শার্ট খেয়াল করেছে, আসলে করেছিল প্রায় এক-চতুর্থাংশ।",
+    "thumbnail_hook": "সবাই কি দেখছে?",
+    "yt_title": "কেন মনে হয় সবাই আপনাকেই দেখছে? #Shorts",
+    "yt_description": "ক্লাসে ভুল করলে বা নতুন পোশাকে বের হলে কেন মনে হয় সবার চোখ আপনার দিকে? এটাই মনোবিজ্ঞানের স্পটলাইট ইফেক্ট। জানুন গবেষণা কী বলে এবং কীভাবে এই অকারণ ভয় কাটাবেন।\n\nমনের আরও রহস্য জানতে Mind Decode Bangla ফলো করুন।\n\n#SpotlightEffect #BanglaPsychology #HumanBehavior #MindDecodeBangla #Shorts #মনোবিজ্ঞান",
+    "yt_tags": [
+      "Bangla Psychology",
+      "Human Behavior",
+      "Mind Decode Bangla",
+      "Shorts",
+      "Spotlight Effect",
+      "Social Anxiety",
+      "মনোবিজ্ঞান"
+    ],
+    "fb_caption": "ভুল করলে কি মনে হয় সবাই আপনাকেই দেখছে? আসলে বেশিরভাগ মানুষ নিজের চিন্তাতেই ব্যস্ত থাকে। আপনারও কি কখনো এমন হয়েছে? কমেন্টে জানান।\n\n#SpotlightEffect #BanglaPsychology #MindDecodeBangla",
+    "x_post": "ভুল করলে মনে হয় সবাই দেখছে, অথচ সবাই নিজের চিন্তাতেই ব্যস্ত। আপনার ভুল ওরা দ্রুত ভুলে যায়। #SpotlightEffect #BanglaPsychology",
     "scenes": [
       {
-        "narration": "যারা সবার সামনে খুব কম কথা বলে, তাদের কখনোই দুর্বল বা বোকা ভাববেন না।",
-        "screen_text": "কম কথা বলা মানুষ দুর্বল নয়",
-        "pixabay_query": "silent man dark room moody"
+        "narration": "ক্লাসে একটা ভুল উত্তর দিয়ে ফেললে, মনে হয় সবাই আপনাকেই দেখছে।",
+        "screen_text": "সবাই কি আপনাকেই দেখছে?",
+        "pixabay_query": "student sitting classroom"
       },
       {
-        "narration": "সাইকোলজি বলে, নীরব মানুষদের মস্তিষ্ক অন্যদের চেয়ে অনেক বেশি তথ্য বিশ্লেষণ করে।",
-        "screen_text": "তাদের মস্তিষ্ক সবসময় বিশ্লেষণ করে",
-        "pixabay_query": "human eye closeup dark"
+        "narration": "নতুন জামা পরে বেরোলে, মনে হয় সবার চোখ শুধু আপনার দিকে।",
+        "screen_text": "সবার চোখ শুধু আমার দিকে",
+        "pixabay_query": "woman walking busy street"
       },
       {
-        "narration": "আপনি যখন কথা বলেন, তারা শুধু আপনার শব্দ নয়, আপনার চোখের ভাষাও পড়ে নেয়।",
-        "screen_text": "তারা আপনার চোখের ভাষা পড়ে",
-        "pixabay_query": "person thinking night window"
+        "narration": "মনোবিজ্ঞানে এই অনুভূতির নাম স্পটলাইট ইফেক্ট, যেন মাথার উপরে আলো জ্বলছে।",
+        "screen_text": "এর নাম স্পটলাইট ইফেক্ট",
+        "pixabay_query": "spotlight stage dark"
       },
       {
-        "narration": "কে সত্যি বলছে, আর কে অভিনয় করছে, তা তারা মুহূর্তেই ধরে ফেলতে পারে।",
-        "screen_text": "মিথ্যা ও অভিনয় মুহূর্তেই ধরে ফেলে",
-        "pixabay_query": "shadow silhouette man dark"
+        "narration": "গবেষণায় দেখা গেছে, যতজন খেয়াল করছে বলে ভাবি, আসলে করে তার প্রায় অর্ধেক।",
+        "screen_text": "আসলে দেখে মাত্র অর্ধেক",
+        "pixabay_query": "people walking street phones"
       },
       {
-        "narration": "তারা অযথা তর্কে জড়ায় না, কারণ তারা জানে, কোথায় শক্তি খরচ করতে হবে।",
-        "screen_text": "তারা অযথা তর্কে জড়ায় না",
-        "pixabay_query": "calm ocean waves night"
+        "narration": "বাস্তবে, সবাই নিজের চিন্তা আর নিজের ভয় নিয়েই অনেক বেশি ব্যস্ত থাকে।",
+        "screen_text": "সবাই নিজের চিন্তাতেই ব্যস্ত",
+        "pixabay_query": "commuters train phone"
       },
       {
-        "narration": "কিন্তু যখন তারা মুখ খোলে, তখন তাদের প্রতিটি কথাই মানুষের মনে গেঁথে যায়।",
-        "screen_text": "তাদের প্রতিটি কথা মনে গেঁথে যায়",
-        "pixabay_query": "man walking alone rain night"
+        "narration": "আপনার সেই ছোট্ট ভুলটা, অন্যদের মনে কয়েক মুহূর্তের বেশি টেকে না।",
+        "screen_text": "ভুলটা সবাই দ্রুত ভুলে যায়",
+        "pixabay_query": "woman laughing outdoors"
       },
       {
-        "narration": "তাই কারো নীরবতাকে তার অজ্ঞতা ভাবার ভুল, আর কখনোই করবেন না।",
-        "screen_text": "নীরবতাকে অজ্ঞতা ভাববেন না",
-        "pixabay_query": "moonlight dark clouds night"
+        "narration": "তাই পরেরবার ভয় লাগলে, নিজেকে মনে করিয়ে দিন, কেউ এত খেয়াল করছে না।",
+        "screen_text": "কেউ এত খেয়াল করছে না",
+        "pixabay_query": "man walking confidently city"
       },
       {
-        "narration": "মনে রাখবেন, সবচেয়ে গভীর নদীই, সবচেয়ে শান্তভাবে বয়ে চলে।",
-        "screen_text": "গভীর নদী সবসময় শান্ত থাকে",
-        "pixabay_query": "dark river mist night"
+        "narration": "আপনারও কি কখনো এমন মনে হয়েছে, কমেন্টে নিজের অভিজ্ঞতাটা লিখে জানান।",
+        "screen_text": "আপনারও কি এমন হয়?",
+        "pixabay_query": "friends laughing together"
+      }
+    ]
+  },
+  {
+    "topic_slug": "lok-ki-bolbe-social-conformity",
+    "research_insight": "সলোমন অ্যাশের কনফর্মিটি পরীক্ষায় (১৯৫১) অংশগ্রহণকারীরা সহজ প্রশ্নের সঠিক উত্তর জানত, তবু গোষ্ঠীর ভুল উত্তর শুনে বেশিরভাগই অন্তত একবার সেই ভুলে সায় দিয়েছে। দলের অংশ হওয়ার টান এত প্রবল যে, ‘লোকে কী বলবে’ ভয় অনেক সময় নিজের ইচ্ছা ও বিচারবুদ্ধিকেও চাপা দেয়।",
+    "thumbnail_hook": "লোকে কী বলবে?",
+    "yt_title": "লোকে কী বলবে, এই ভয়ের মনোবিজ্ঞান #Shorts",
+    "yt_description": "নিজের স্বপ্ন চেপে রেখে অন্যের পছন্দে চলতে গিয়ে কি আপনি ক্লান্ত? সলোমন অ্যাশের বিখ্যাত পরীক্ষা থেকে জানুন, কেন লোকের ভয়ে আমরা সঠিক জেনেও চুপ করে যাই এবং কীভাবে নিজের সিদ্ধান্ত নেওয়ার সাহস ফিরে পাবেন।\n\nমনের না-বলা গল্প জানতে Mind Decode Bangla ফলো করুন।\n\n#LokKiBolbe #Conformity #BanglaPsychology #MindDecodeBangla #Shorts",
+    "yt_tags": [
+      "Bangla Psychology",
+      "Human Behavior",
+      "Mind Decode Bangla",
+      "Shorts",
+      "Social Pressure",
+      "Asch Conformity",
+      "লোকে কী বলবে"
+    ],
+    "fb_caption": "লোকের ভয়ে কি কখনো নিজের পছন্দ ছেড়ে দিয়েছেন? মনোবিজ্ঞান বলছে, এটা দুর্বলতা নয়, দলের অংশ হওয়ার স্বাভাবিক টান। কিন্তু জীবনটা তো আপনার। আপনার গল্পটা কমেন্টে লিখুন।\n\n#LokKiBolbe #BanglaPsychology #MindDecodeBangla #HumanBehavior",
+    "x_post": "লোকে কী বলবে, এই ভয়ে আমরা অনেকেই নিজের স্বপ্ন চাপা দিই। জীবনটা আপনার, সিদ্ধান্তটাও আপনার। #LokKiBolbe #BanglaPsychology",
+    "scenes": [
+      {
+        "narration": "সবাই বলছে ইঞ্জিনিয়ারিং পড়ো, অথচ আপনার মন পড়ে আছে ছবি আঁকায়।",
+        "screen_text": "মন চায় একটা, করছেন আরেকটা",
+        "pixabay_query": "artist painting canvas"
+      },
+      {
+        "narration": "নিজের মনের কথা বলতে গেলেই, ঠিক তখন কানে বাজে, লোকে কী বলবে।",
+        "screen_text": "কানে বাজে, লোকে কী বলবে",
+        "pixabay_query": "people whispering ear"
+      },
+      {
+        "narration": "এটা দুর্বলতা নয়, মানুষ স্বভাবতই সবসময় দলের অংশ হয়ে থাকতে চায়।",
+        "screen_text": "দলে থাকা মানুষের স্বভাব",
+        "pixabay_query": "friends standing together"
+      },
+      {
+        "narration": "অ্যাশের পরীক্ষায় সহজ উত্তর জেনেও, বেশিরভাগ মানুষ অন্তত একবার ভুলে সায় দিয়েছে।",
+        "screen_text": "সঠিক জেনেও ভুলে সায়",
+        "pixabay_query": "group raising hands"
+      },
+      {
+        "narration": "ভিন্ন মত দিলে একা হয়ে যাওয়ার ভয়, আমাদের চুপ করিয়ে দেয়।",
+        "screen_text": "একা হওয়ার ভয়ই চুপ করায়",
+        "pixabay_query": "man standing alone crowd"
+      },
+      {
+        "narration": "অন্যের মন রাখতে রাখতে, আমরা একদিন নিজের স্বপ্নটাই চুপচাপ হারিয়ে ফেলি।",
+        "screen_text": "নিজের স্বপ্ন হারিয়ে যায়",
+        "pixabay_query": "man sitting window sunset"
+      },
+      {
+        "narration": "জীবনটা আপনার, তাই সিদ্ধান্তের আগে নিজেকে জিজ্ঞেস করুন, আমি কী চাই।",
+        "screen_text": "আগে জিজ্ঞেস করুন, আমি কী চাই",
+        "pixabay_query": "road fork forest"
+      },
+      {
+        "narration": "আপনি কি কখনো লোকের ভয়ে, নিজের পছন্দ ছেড়ে দিয়েছেন, কমেন্টে বলুন।",
+        "screen_text": "আপনি কি কখনো ছেড়ে দিয়েছেন?",
+        "pixabay_query": "woman thinking looking window"
+      }
+    ]
+  },
+  {
+    "topic_slug": "zeigarnik-effect-unfinished-words",
+    "research_insight": "জেইগার্নিক ইফেক্ট: ১৯২০-এর দশকে ব্লুমা জেইগার্নিক লক্ষ্য করেন, অসমাপ্ত কাজ ও অমীমাংসিত বিষয় মনে বেশি করে ঘুরতে থাকে। পরবর্তী গবেষণায় দেখা গেছে, অপূর্ণ লক্ষ্য নিয়ে আসা অনাহূত চিন্তা কমাতে একটি স্পষ্ট পরিকল্পনা লিখে রাখা সাহায্য করে।",
+    "thumbnail_hook": "যে কথাটা বলা হয়নি",
+    "yt_title": "না বলা কথাটাই কেন সবচেয়ে বেশি মনে পড়ে? #Shorts",
+    "yt_description": "যে সম্পর্ক শেষ হয়নি, যে কথা বলা হয়নি, সেটাই কেন রাতে সবচেয়ে বেশি মনে পড়ে? এটাই জেইগার্নিক ইফেক্ট। জানুন কেন মন অসমাপ্ত বিষয় ছাড়তে চায় না এবং কীভাবে নিজেকে হালকা করবেন।\n\nমনের ভেতরের গল্প জানতে Mind Decode Bangla-র সাথে থাকুন।\n\n#ZeigarnikEffect #BanglaPsychology #MindDecodeBangla #Shorts #মনোবিজ্ঞান",
+    "yt_tags": [
+      "Bangla Psychology",
+      "Human Behavior",
+      "Mind Decode Bangla",
+      "Shorts",
+      "Zeigarnik Effect",
+      "Unfinished Business",
+      "Overthinking"
+    ],
+    "fb_caption": "আপনার মনে কি এমন কোনো কথা আছে, যেটা কখনো বলা হয়নি? মনোবিজ্ঞান বলে, অসমাপ্ত বিষয় মন সহজে ছাড়ে না। খাতায় লিখে ফেললেও অনেকটা হালকা লাগে। আপনার কী মনে হয়? কমেন্টে জানান।\n\n#ZeigarnikEffect #BanglaPsychology #MindDecodeBangla #Emotions",
+    "x_post": "যে কথাটা বলা হয়নি, সেটাই মনে সবচেয়ে বেশি ঘোরে। এটাই জেইগার্নিক ইফেক্ট। #ZeigarnikEffect #BanglaPsychology",
+    "scenes": [
+      {
+        "narration": "যে কথাটা আপনি কখনো বলতে পারেননি, সেটাই কেন সবচেয়ে বেশি মনে পড়ে?",
+        "screen_text": "না বলা কথাই কেন মনে পড়ে?",
+        "pixabay_query": "man sitting alone dark room"
+      },
+      {
+        "narration": "শেষ হয়নি এমন সম্পর্ক, অসমাপ্ত আলাপ, রাতে আপনাকে ঘুমাতে দেয় না।",
+        "screen_text": "অসমাপ্ত আলাপ ঘুমাতে দেয় না",
+        "pixabay_query": "woman awake bed night"
+      },
+      {
+        "narration": "মনোবিজ্ঞানের ভাষায় এর নাম জেইগার্নিক ইফেক্ট, মন অসমাপ্ত জিনিস ছাড়তে চায় না।",
+        "screen_text": "এর নাম জেইগার্নিক ইফেক্ট",
+        "pixabay_query": "puzzle missing piece"
+      },
+      {
+        "narration": "ব্লুমা জেইগার্নিক দেখেছিলেন, অসমাপ্ত কাজ আমাদের মনে বেশি করে আটকে থাকে।",
+        "screen_text": "অসমাপ্ত জিনিস মনে আটকে থাকে",
+        "pixabay_query": "to do list notebook"
+      },
+      {
+        "narration": "মস্তিষ্ক ওটাকে খোলা ট্যাবের মতো রেখে দেয়, আর ভেতরে ভেতরে চলতেই থাকে।",
+        "screen_text": "মনে খোলা ট্যাব চলছেই",
+        "pixabay_query": "laptop screen tabs"
+      },
+      {
+        "narration": "তাই একটা অসমাপ্ত বিষয়ও, ধীরে ধীরে আমাদের ক্লান্ত আর অস্থির করে তোলে।",
+        "screen_text": "ধীরে ধীরে ক্লান্ত করে তোলে",
+        "pixabay_query": "tired man desk night"
+      },
+      {
+        "narration": "অসমাপ্ত বিষয়ের একটা পরিকল্পনা বা খাতায় লেখা চিঠি, মনকে অনেকটা হালকা করে।",
+        "screen_text": "লিখে ফেলুন, মন হালকা হবে",
+        "pixabay_query": "hand writing letter pen"
+      },
+      {
+        "narration": "আপনার মনেও কি এমন কোনো না বলা কথা আছে, কমেন্টে লিখে ফেলুন।",
+        "screen_text": "আপনার না বলা কথাটা কী?",
+        "pixabay_query": "lonely bench evening"
+      }
+    ]
+  },
+  {
+    "topic_slug": "night-overthinking-rumination",
+    "research_insight": "রাতে বাইরের কোলাহল ও কাজের চাপ কমে গেলে অমীমাংসিত দুশ্চিন্তা ও পুরোনো ভুলগুলো মনে বেশি জায়গা নেয়; একই নেতিবাচক চিন্তার এই বারবার ঘোরাকে বলে ‘রুমিনেশন’। ঘুমের অভাবে আবেগের তীব্রতাও বাড়ে। একটি গবেষণায় দেখা গেছে, ঘুমের আগে পাঁচ মিনিট আগামীকালের করণীয় লিখে রাখলে দ্রুত ঘুম আসতে সাহায্য করে।",
+    "thumbnail_hook": "রাত হলেই কেন?",
+    "yt_title": "রাত হলেই কেন এত বেশি ভাবনা আসে? #Shorts",
+    "yt_description": "সারাদিন ভালো কাটলেও রাত হলেই কেন পুরোনো কষ্ট আর দুশ্চিন্তা ফিরে আসে? জানুন রাতের ওভারথিংকিংয়ের মনোবিজ্ঞান এবং ঘুমের আগে মন শান্ত করার একটি সহজ উপায়।\n\nপ্রতিদিনের মনের রহস্য নিয়ে Mind Decode Bangla।\n\n#Overthinking #BanglaPsychology #MindDecodeBangla #Shorts #মনোবিজ্ঞান",
+    "yt_tags": [
+      "Bangla Psychology",
+      "Human Behavior",
+      "Mind Decode Bangla",
+      "Shorts",
+      "Overthinking",
+      "Night Thoughts",
+      "Sleep"
+    ],
+    "fb_caption": "রাত হলেই কি আপনার মাথায় চিন্তার ঝড় শুরু হয়? এটা শুধু আপনার একার সমস্যা নয়। ঘুমের আগে আগামীকালের কাজগুলো খাতায় লিখে ফেলে দেখুন। আপনার রাতের সবচেয়ে বড় চিন্তা কী, কমেন্টে জানান।\n\n#Overthinking #BanglaPsychology #MindDecodeBangla #MentalHealth",
+    "x_post": "দিনের কোলাহল চিন্তা চাপা দেয়, রাতের নীরবতা সেগুলো জোরে শোনায়। রাতের ভাবনা সবসময় সত্যি নয়। #Overthinking #BanglaPsychology",
+    "scenes": [
+      {
+        "narration": "সারাদিন ঠিকঠাক কাটে, অথচ রাত হলেই মাথায় চিন্তার ঝড় শুরু হয়।",
+        "screen_text": "রাত হলেই চিন্তার ঝড়",
+        "pixabay_query": "man awake bed night"
+      },
+      {
+        "narration": "পুরোনো ভুল, পুরোনো কষ্ট, পুরোনো কথাগুলো একে একে আবার ফিরে আসে।",
+        "screen_text": "পুরোনো কষ্ট ফিরে আসে",
+        "pixabay_query": "old photographs table"
+      },
+      {
+        "narration": "দিনের বেলা ব্যস্ততা, আওয়াজ আর কাজ, এই চিন্তাগুলোকে চাপা দিয়ে রাখে।",
+        "screen_text": "দিনে ব্যস্ততা চিন্তা চাপা দেয়",
+        "pixabay_query": "busy street daytime"
+      },
+      {
+        "narration": "রাতে চারপাশ নীরব হয়ে গেলে, মন অসমাপ্ত দুশ্চিন্তাগুলোর দিকেই ঘুরে তাকায়।",
+        "screen_text": "নীরবতায় চিন্তা জোরে শোনা যায়",
+        "pixabay_query": "dark bedroom window moonlight"
+      },
+      {
+        "narration": "ক্লান্ত মস্তিষ্ক আবেগ সামলাতে কম পারে, তাই ছোট ভয়ও বড় লাগে।",
+        "screen_text": "ক্লান্ত মনে ছোট ভয়ও বড়",
+        "pixabay_query": "tired woman rubbing eyes"
+      },
+      {
+        "narration": "এভাবে একই চিন্তা বারবার ঘুরতে ঘুরতে, ঘুম আরও অনেক দূরে সরে যায়।",
+        "screen_text": "ঘুম যায় আরও দূরে",
+        "pixabay_query": "alarm clock night"
+      },
+      {
+        "narration": "ঘুমের আগে পাঁচ মিনিট, আগামীকালের কাজগুলো লিখে ফেললে, ঘুম সহজে আসতে পারে।",
+        "screen_text": "মাথার ভার খাতায় নামান",
+        "pixabay_query": "hand writing notebook lamp"
+      },
+      {
+        "narration": "রাতের চিন্তা সবসময় সত্যি নয়, সকাল হলে অনেকটাই অন্যরকম লাগে, ঠিক কি না?",
+        "screen_text": "সকাল হলে সবটা অন্যরকম লাগে",
+        "pixabay_query": "morning sunlight window"
+      }
+    ]
+  },
+  {
+    "topic_slug": "social-comparison-highlight-reel",
+    "research_insight": "লিওন ফেস্টিঙ্গারের সামাজিক তুলনা তত্ত্ব (১৯৫৪) বলে, মানুষ নিজের অবস্থান বুঝতে অন্যের সাথে নিজেকে তুলনা করে। সোশ্যাল মিডিয়ায় সাধারণত মানুষ নিজের সেরা মুহূর্তগুলোই দেখায়, তাই সেই ‘হাইলাইটের’ সাথে নিজের সাধারণ দিনের তুলনা করলে আত্মমূল্যবোধ কমে যেতে পারে।",
+    "thumbnail_hook": "অন্যের হাসি, নিজের কষ্ট",
+    "yt_title": "অন্যের জীবন দেখে কেন নিজেকে ছোট লাগে? #Shorts",
+    "yt_description": "ফেসবুক বা ইনস্টাগ্রামে অন্যের সুখের ছবি দেখে কি নিজেকে পিছিয়ে মনে হয়? জানুন সামাজিক তুলনার মনোবিজ্ঞান, কেন আমরা অন্যের সেরা মুহূর্তের সাথে নিজের সাধারণ দিন মেলাই, এবং কীভাবে এই ফাঁদ থেকে বের হবেন।\n\nMind Decode Bangla-তে মনের আরও সত্যি গল্প।\n\n#SocialComparison #BanglaPsychology #MindDecodeBangla #Shorts #মনোবিজ্ঞান",
+    "yt_tags": [
+      "Bangla Psychology",
+      "Human Behavior",
+      "Mind Decode Bangla",
+      "Shorts",
+      "Social Comparison",
+      "Social Media Effect",
+      "Self Esteem"
+    ],
+    "fb_caption": "সোশ্যাল মিডিয়া দেখে কি কখনো নিজেকে ছোট মনে হয়েছে? মনে রাখবেন, আপনি দেখছেন অন্যের সেরা মুহূর্ত, আর নিজের পুরো জীবন। আপনার অভিজ্ঞতা কমেন্টে লিখুন।\n\n#SocialComparison #BanglaPsychology #MindDecodeBangla #SelfLove",
+    "x_post": "অন্যের ঝলমলে ছবির সাথে নিজের পুরো জীবনের তুলনা করবেন না। ওরা শুধু সেরা মুহূর্তই দেখায়। #SocialComparison #BanglaPsychology",
+    "scenes": [
+      {
+        "narration": "রাতে ফেসবুক খুলে অন্যের হাসিমুখ দেখে, হঠাৎ নিজের জীবনটা ফাঁকা লাগে।",
+        "screen_text": "অন্যের হাসি, নিজের শূন্যতা",
+        "pixabay_query": "scrolling smartphone dark room"
+      },
+      {
+        "narration": "কেউ বিদেশে ঘুরছে, কেউ নতুন চাকরি পেয়েছে, আপনি যেন পিছিয়ে আছেন।",
+        "screen_text": "সবাই এগোচ্ছে, আমি পিছিয়ে",
+        "pixabay_query": "airplane window clouds"
+      },
+      {
+        "narration": "মনোবিজ্ঞানীরা একে বলেন সামাজিক তুলনা, মানুষ স্বভাবতই নিজেকে অন্যের সাথে মাপে।",
+        "screen_text": "মানুষ স্বভাবতই তুলনা করে",
+        "pixabay_query": "friends looking phone together"
+      },
+      {
+        "narration": "কিন্তু সোশ্যাল মিডিয়ায়, মানুষ প্রায় শুধু নিজের সেরা মুহূর্তগুলোই সাজিয়ে দেখায়।",
+        "screen_text": "ওরা শুধু সেরা মুহূর্ত দেখায়",
+        "pixabay_query": "woman taking selfie"
+      },
+      {
+        "narration": "আপনি দেখছেন অন্যের ঝলমলে ছবি, আর নিজের পর্দার পেছনের সব কষ্ট।",
+        "screen_text": "ওদের ছবি বনাম আপনার বাস্তবতা",
+        "pixabay_query": "red curtain stage"
+      },
+      {
+        "narration": "এই অসম তুলনা ধীরে ধীরে, নিজের প্রতি ভালোবাসা আর আত্মবিশ্বাস কেড়ে নেয়।",
+        "screen_text": "আত্মবিশ্বাস ধীরে ধীরে কমে",
+        "pixabay_query": "sad woman mirror"
+      },
+      {
+        "narration": "নিজের গতিতে এগোনোই আসল জয়, কারণ আপনার পথ অন্য কারও নয়।",
+        "screen_text": "আপনার পথ, আপনার গতি",
+        "pixabay_query": "man walking mountain trail"
+      },
+      {
+        "narration": "আপনি কি কখনো সোশ্যাল মিডিয়া দেখে নিজেকে ছোট ভেবেছেন, কমেন্টে জানান।",
+        "screen_text": "আপনারও কি এমন হয়েছে?",
+        "pixabay_query": "hand putting phone down"
+      }
+    ]
+  },
+  {
+    "topic_slug": "impostor-syndrome-feeling-like-a-fraud",
+    "research_insight": "ইম্পোস্টর সিনড্রোম (ক্ল্যান্স ও ইমস, ১৯৭৮): যোগ্যতা ও সাফল্য থাকা সত্ত্বেও মনে হওয়া যে ‘আমি আসলে ভুয়া, একদিন সবাই ধরে ফেলবে’। এটি রোগ নয়, তবে গবেষকদের অনুমান, প্রায় ৭০% মানুষ জীবনের কোনো না কোনো সময় এটি অনুভব করেন; উচ্চ প্রত্যাশা ও পারফেকশনিজমের সাথে এর যোগ আছে।",
+    "thumbnail_hook": "আমি কি ভুয়া?",
+    "yt_title": "সফল হয়েও কেন নিজেকে ভুয়া মনে হয়? #Shorts",
+    "yt_description": "ভালো ফলাফল বা প্রশংসা পেয়েও কি মনে হয় এটা শুধু ভাগ্য? এই অনুভূতির নাম ইম্পোস্টর সিনড্রোম। জানুন কেন যোগ্য মানুষরাও নিজেকে অযোগ্য ভাবে এবং কীভাবে এই ভয় কাটাবেন।\n\nMind Decode Bangla-তে মনের রহস্যের সহজ ব্যাখ্যা।\n\n#ImpostorSyndrome #BanglaPsychology #MindDecodeBangla #Shorts #আত্মবিশ্বাস",
+    "yt_tags": [
+      "Bangla Psychology",
+      "Human Behavior",
+      "Mind Decode Bangla",
+      "Shorts",
+      "Impostor Syndrome",
+      "Self Confidence",
+      "Success Anxiety"
+    ],
+    "fb_caption": "সফল হয়েও কি কখনো মনে হয়েছে, একদিন সবাই ধরে ফেলবে আপনি আসলে যোগ্য নন? বিশ্বাস করুন, এটা অনেকেরই হয়। নিজের সাফল্যগুলো লিখে রাখুন, নিজেকে মনে করিয়ে দিন। আপনারও কি এমন হয়েছে? কমেন্টে জানান।\n\n#ImpostorSyndrome #BanglaPsychology #MindDecodeBangla",
+    "x_post": "সফল হয়েও মনে হয় আমি ভুয়া? এটা ইম্পোস্টর সিনড্রোম, আর অনেকেরই হয়। আপনার যোগ্যতা সত্যি। #ImpostorSyndrome #BanglaPsychology",
+    "scenes": [
+      {
+        "narration": "ভালো রেজাল্ট বা প্রশংসা পেয়েও, মনে হয় এটা শুধুই ভাগ্যের জোর।",
+        "screen_text": "সাফল্য পেয়েও মনে হয় ভাগ্য",
+        "pixabay_query": "graduation certificate hand"
+      },
+      {
+        "narration": "ভেতরে ভেতরে ভয়, একদিন সবাই বুঝে ফেলবে আপনি আসলে যোগ্য নন।",
+        "screen_text": "একদিন সবাই ধরে ফেলবে",
+        "pixabay_query": "worried businessman office"
+      },
+      {
+        "narration": "এই অনুভূতির নাম ইম্পোস্টর সিনড্রোম, মানে নিজেকে সবসময় ভুয়া মনে করা।",
+        "screen_text": "এর নাম ইম্পোস্টর সিনড্রোম",
+        "pixabay_query": "person holding mask"
+      },
+      {
+        "narration": "গবেষকদের অনুমান, প্রায় দশজনের সাতজন জীবনে কখনো না কখনো এমনটা অনুভব করে।",
+        "screen_text": "১০ জনে ৭ জন অনুভব করে",
+        "pixabay_query": "people standing line"
+      },
+      {
+        "narration": "এটা তাদেরই বেশি হয়, যারা নিজের কাছে অনেক উঁচু মানের প্রত্যাশা রাখে।",
+        "screen_text": "নিজের কাছে প্রত্যাশা অনেক উঁচু",
+        "pixabay_query": "student studying night desk"
+      },
+      {
+        "narration": "ফলে প্রতিটা সাফল্যের পরেও, মনটা শান্তি না পেয়ে আরও বেশি চাপ নেয়।",
+        "screen_text": "সাফল্যেও শান্তি মেলে না",
+        "pixabay_query": "man alone rooftop city night"
+      },
+      {
+        "narration": "নিজের সাফল্যগুলো লিখে রাখুন, আর মনে রাখুন, শুধু ভাগ্য দিয়ে সাফল্য আসে না।",
+        "screen_text": "সাফল্যগুলো লিখে রাখুন",
+        "pixabay_query": "hand ticking checklist"
+      },
+      {
+        "narration": "আপনার ভেতরেও কি কখনো এই ভুয়া হওয়ার ভয় এসেছে, কমেন্টে জানান।",
+        "screen_text": "আপনার কি এই ভয় আছে?",
+        "pixabay_query": "woman smiling confident"
+      }
+    ]
+  },
+  {
+    "topic_slug": "people-pleasing-cant-say-no",
+    "research_insight": "পিপল-প্লিজিং বা সবাইকে খুশি করার প্রবণতার মূলে অনেক সময় থাকে প্রত্যাখ্যান ও অননুমোদনের ভয়। সম্পর্কে থাকার প্রয়োজন মানুষের এত গভীর যে ‘না’ বললে সম্পর্ক নষ্ট হওয়ার আশঙ্কা বড় হয়ে ওঠে; ফলে নিজের সীমা বিসর্জন দিয়ে অন্যের মন রাখা অভ্যাসে পরিণত হয়, যা ধীরে ধীরে ক্লান্তি ও চাপা ক্ষোভ তৈরি করে।",
+    "thumbnail_hook": "‘না’ বলতে এত ভয়?",
+    "yt_title": "কেন আমরা চাইলেও ‘না’ বলতে পারি না? #Shorts",
+    "yt_description": "ক্লান্ত থাকলেও কেউ সাহায্য চাইলে হ্যাঁ বলে ফেলেন? এটাই পিপল-প্লিজিং। জানুন কেন সবার মন রাখতে গিয়ে আমরা নিজের সীমানা ভুলে যাই এবং কীভাবে ভদ্রভাবে সীমানা ঠিক করবেন।\n\nMind Decode Bangla-র সাথে নিজেকে আরও ভালো করে চিনুন।\n\n#PeoplePleasing #BanglaPsychology #MindDecodeBangla #Shorts #মনোবিজ্ঞান",
+    "yt_tags": [
+      "Bangla Psychology",
+      "Human Behavior",
+      "Mind Decode Bangla",
+      "Shorts",
+      "People Pleasing",
+      "Boundaries",
+      "Saying No"
+    ],
+    "fb_caption": "আপনি কি এমন কেউ, যিনি সবসময় অন্যের মন রাখতে গিয়ে নিজের মনটাকে সবার শেষে রাখেন? আজ একটা ছোট অনুরোধে ভদ্রভাবে ‘না’ বলে দেখুন। কেমন লাগল, কমেন্টে জানান।\n\n#PeoplePleasing #BanglaPsychology #MindDecodeBangla #Boundaries",
+    "x_post": "সবাইকে খুশি করতে গিয়ে আমরা নিজেকেই হারিয়ে ফেলি। ভদ্রভাবে ‘না’ বলাও নিজের প্রতি ভালোবাসা। #PeoplePleasing #BanglaPsychology",
+    "scenes": [
+      {
+        "narration": "আপনি ক্লান্ত, তবুও কেউ সাহায্য চাইলে, সাথে সাথে হ্যাঁ বলে ফেলেন।",
+        "screen_text": "ক্লান্ত, তবুও মুখে হ্যাঁ",
+        "pixabay_query": "tired woman working laptop night"
+      },
+      {
+        "narration": "নিজের কাজ ফেলে অন্যের কাজ করে দিয়ে, পরে মনে মনে রাগ হয়।",
+        "screen_text": "অন্যের কাজ করে, নিজে ক্লান্ত",
+        "pixabay_query": "overwhelmed man paperwork desk"
+      },
+      {
+        "narration": "একে বলে পিপল প্লিজিং, মানে সবাইকে খুশি রাখতে গিয়ে নিজেকে ভুলে যাওয়া।",
+        "screen_text": "সবাইকে খুশি, নিজেকে ভুলে",
+        "pixabay_query": "hands reaching out"
+      },
+      {
+        "narration": "এর মূলে আছে প্রত্যাখ্যানের ভয়, মনে হয় না বললেই সম্পর্ক ভেঙে যাবে।",
+        "screen_text": "না বললেই সম্পর্ক ভাঙবে ভয়",
+        "pixabay_query": "couple back to back"
+      },
+      {
+        "narration": "আমরা অনেকেই ছোটবেলা থেকে শিখেছি, সবার মন রাখলেই ভালোবাসা পাওয়া যায়।",
+        "screen_text": "ভালোবাসা পেতে সবার মন রাখা",
+        "pixabay_query": "mother hugging child"
+      },
+      {
+        "narration": "কিন্তু নিজের সীমা বিসর্জন দিলে, ক্লান্তি আর চাপা ক্ষোভ জমতেই থাকে।",
+        "screen_text": "চাপা ক্ষোভ জমতেই থাকে",
+        "pixabay_query": "stressed man hands face"
+      },
+      {
+        "narration": "অনেক সময়, আমরা যতটা ভাবি, মানুষ আমাদের সীমানা তার চেয়ে সহজে মেনে নেয়।",
+        "screen_text": "আপনার সীমানা মানুষ মেনে নেয়",
+        "pixabay_query": "hand stop gesture"
+      },
+      {
+        "narration": "আজ ছোট একটা অনুরোধে, ভদ্রভাবে ‘না’ বলে দেখুন, কেমন লাগে, কমেন্টে জানান।",
+        "screen_text": "আজ একটা ‘না’ বলে দেখুন",
+        "pixabay_query": "woman arms open field"
+      }
+    ]
+  },
+  {
+    "topic_slug": "childhood-attachment-adult-relationships",
+    "research_insight": "জন বাউলবি ও মেরি আইন্সওয়ার্থের অ্যাটাচমেন্ট থিওরি অনুযায়ী, শৈশবে যত্ন ও নিরাপত্তার অভিজ্ঞতা আমাদের ভেতরে এমন একটি কাঠামো তৈরি করে, যা পরবর্তী জীবনের ঘনিষ্ঠ সম্পর্কেও প্রভাব ফেলতে পারে। এটি ভাগ্য নয়; সচেতনতা, নিরাপদ সম্পর্ক ও প্রয়োজনে থেরাপির মাধ্যমে এই ধরন বদলানো সম্ভব।",
+    "thumbnail_hook": "ভালোবাসার শিকড় ছোটবেলায়",
+    "yt_title": "ছোটবেলা কীভাবে আপনার ভালোবাসার ধরন ঠিক করে? #Shorts",
+    "yt_description": "কেউ একটু দূরে গেলেই অস্থির হন, নাকি কাছে এলে নিজেই সরে যান? মনোবিজ্ঞানের অ্যাটাচমেন্ট থিওরি বলছে, শৈশবের অভিজ্ঞতা আমাদের সম্পর্কের ধরনে ছাপ ফেলতে পারে। তবে সচেতন হলে সেই ধরন বদলানো সম্ভব।\n\nMind Decode Bangla-তে সম্পর্ক ও মনের গল্প।\n\n#AttachmentTheory #BanglaPsychology #MindDecodeBangla #Shorts #সম্পর্ক",
+    "yt_tags": [
+      "Bangla Psychology",
+      "Human Behavior",
+      "Mind Decode Bangla",
+      "Shorts",
+      "Attachment Theory",
+      "Relationship Psychology",
+      "Childhood Effect"
+    ],
+    "fb_caption": "ছোটবেলায় ভালোবাসা ও নিরাপত্তা আমরা যেভাবে পেয়েছি, বড় হয়ে সম্পর্কেও তার ছাপ থেকে যায়। তবে এটা ভাগ্য নয়, বদলানো সম্ভব। আপনার সম্পর্কের ধরনে কি ছোটবেলার ছাপ দেখতে পান? কমেন্টে জানান।\n\n#AttachmentTheory #BanglaPsychology #MindDecodeBangla #Relationship",
+    "x_post": "ছোটবেলায় যেভাবে ভালোবাসা পেয়েছি, বড় হয়ে সম্পর্কেও তার ছাপ থাকে। তবে সেই ধরন বদলানো যায়। #AttachmentTheory #BanglaPsychology",
+    "scenes": [
+      {
+        "narration": "কেউ একটু দূরে গেলেই আপনি অস্থির হয়ে পড়েন, কেন এমন হয়?",
+        "screen_text": "একটু দূরত্বেই কেন অস্থির?",
+        "pixabay_query": "woman waiting phone anxious"
+      },
+      {
+        "narration": "অথবা কেউ কাছে আসতে চাইলে, আপনি নিজেই চুপচাপ দূরে সরে যান।",
+        "screen_text": "কাছে এলে আপনিই সরে যান",
+        "pixabay_query": "man walking away street"
+      },
+      {
+        "narration": "এর উত্তর লুকিয়ে আছে আপনার শৈশবে, মায়ের কোলে আর বাবার চোখে।",
+        "screen_text": "উত্তর লুকিয়ে আছে শৈশবে",
+        "pixabay_query": "father child holding hands"
+      },
+      {
+        "narration": "মনোবিজ্ঞানী বাউলবি দেখিয়েছেন, শৈশবের নিরাপত্তা পরের সম্পর্কের ভিত অনেকটাই তৈরি করে।",
+        "screen_text": "শৈশবই গড়ে সম্পর্কের ভিত",
+        "pixabay_query": "family walking park sunset"
+      },
+      {
+        "narration": "যে শিশু কান্নার পর কোলে ঠাঁই পেয়েছে, সে ভরসা করতে শেখে।",
+        "screen_text": "কান্নার পর কোল পেলে ভরসা শেখে",
+        "pixabay_query": "mother comforting child"
+      },
+      {
+        "narration": "আর যে শিশু একা কেঁদেছে, সে বড় হয়ে ভালোবাসাকেও ভয় পেতে পারে।",
+        "screen_text": "একা কাঁদা শিশু ভয় পেতে পারে",
+        "pixabay_query": "little boy sitting alone"
+      },
+      {
+        "narration": "তবে এটা কোনো ভাগ্য নয়, সচেতন হলে এই ধরন বদলানো যায়।",
+        "screen_text": "ভাগ্য নয়, বদলানো সম্ভব",
+        "pixabay_query": "seedling growing sunlight"
+      },
+      {
+        "narration": "আপনার সম্পর্কের ধরনে কখনো কি ছোটবেলার ছাপ দেখতে পান, কমেন্টে জানান।",
+        "screen_text": "ছোটবেলার ছাপ দেখতে পান?",
+        "pixabay_query": "old photo album"
+      }
+    ]
+  },
+  {
+    "topic_slug": "toxic-bond-intermittent-reinforcement",
+    "research_insight": "ইন্টারমিটেন্ট (অনিয়মিত) রিইনফোর্সমেন্ট: স্কিনারের গবেষণায় দেখা গেছে, পুরস্কার কখন আসবে তা অনিশ্চিত হলে আচরণ ছাড়া আরও কঠিন হয়। সম্পর্কে কখনো আদর, কখনো অবহেলা পেলে এই অনিশ্চয়তাই মনকে বেশি বেঁধে রাখতে পারে, যাকে অনেকে ‘ট্রমা বন্ডিং’ বলেন।",
+    "thumbnail_hook": "কেন ছাড়তে পারেন না?",
+    "yt_title": "কষ্ট দিলেও কেন তাকে ছাড়া যায় না? #Shorts",
+    "yt_description": "আজ আদর, কাল অবহেলা, এই আসা-যাওয়াই কি আপনাকে একটা সম্পর্কে আটকে রেখেছে? জানুন অনিয়মিত পুরস্কারের মনোবিজ্ঞান এবং কেন কষ্টের সম্পর্ক ছাড়া এত কঠিন লাগে। আপনি দুর্বল নন।\n\nনিজের কষ্ট একা বইবেন না, বিশ্বস্ত কারও সাথে কথা বলুন। মনের গল্প জানতে Mind Decode Bangla-র সাথে থাকুন।\n\n#ToxicRelationship #BanglaPsychology #MindDecodeBangla #Shorts #সম্পর্ক",
+    "yt_tags": [
+      "Bangla Psychology",
+      "Human Behavior",
+      "Mind Decode Bangla",
+      "Shorts",
+      "Toxic Relationship",
+      "Trauma Bonding",
+      "Relationship Advice"
+    ],
+    "fb_caption": "কখনো আদর, কখনো অবহেলা, এই অনিশ্চয়তাই অনেক সময় মনকে আরও বেশি আটকে রাখে। নিজেকে দোষ দেবেন না, আপনি দুর্বল নন। এমন অভিজ্ঞতা কি আপনি দেখেছেন বা বুঝতে পারেন? নিরাপদ মনে হলে কমেন্টে জানান।\n\n#ToxicRelationship #BanglaPsychology #MindDecodeBangla #Relationship",
+    "x_post": "আজ আদর, কাল অবহেলা, এই অনিশ্চয়তাই মনকে আটকে রাখে। ছাড়তে না পারা দুর্বলতা নয়। #ToxicRelationship #BanglaPsychology",
+    "scenes": [
+      {
+        "narration": "যে মানুষটা কষ্ট দেয়, তাকেই কেন ছেড়ে যাওয়া এত কঠিন লাগে?",
+        "screen_text": "কষ্ট দিলেও কেন ছাড়া যায় না?",
+        "pixabay_query": "woman looking out rainy window"
+      },
+      {
+        "narration": "একদিন মিষ্টি কথা আর আদর, পরের দিনই হঠাৎ নীরবতা আর অবহেলা।",
+        "screen_text": "আজ আদর, কাল অবহেলা",
+        "pixabay_query": "couple holding hands walking"
+      },
+      {
+        "narration": "এই আসা-যাওয়ার খেলাকে মনোবিজ্ঞানে বলে ইন্টারমিটেন্ট রিইনফোর্সমেন্ট, মানে অনিয়মিত পুরস্কার পাওয়া।",
+        "screen_text": "এর নাম অনিয়মিত পুরস্কার",
+        "pixabay_query": "flickering light bulb"
+      },
+      {
+        "narration": "স্কিনারের পরীক্ষায় দেখা গেছে, পুরস্কার অনিশ্চিত হলে, অভ্যাস ছাড়া আরও কঠিন হয়।",
+        "screen_text": "অনিশ্চয়তা আঁকড়ে ধরতে শেখায়",
+        "pixabay_query": "scientist working laboratory"
+      },
+      {
+        "narration": "তাই মনটা ওই এক টুকরো আদরের আশায়, বারবার ফিরে যেতে চায়।",
+        "screen_text": "এক টুকরো আদরের আশায় ফেরা",
+        "pixabay_query": "woman waiting message phone night"
+      },
+      {
+        "narration": "অনেকে একে ট্রমা বন্ডিং বলেন, যেখানে কষ্টের চক্রই মানুষকে সম্পর্কে বেঁধে রাখে।",
+        "screen_text": "কষ্টের চক্রই বেঁধে রাখে",
+        "pixabay_query": "rusty chain padlock"
+      },
+      {
+        "narration": "তাই নিজেকে দোষ দেবেন না, আপনি দুর্বল নন, মনটা শুধু জড়িয়ে গেছে।",
+        "screen_text": "আপনি দুর্বল নন, জড়িয়ে গেছেন",
+        "pixabay_query": "woman peaceful sunlight field"
+      },
+      {
+        "narration": "নিজের কষ্টটাকে বিশ্বাস করুন, আর বিশ্বস্ত কারও সাথে মন খুলে কথা বলুন।",
+        "screen_text": "বিশ্বস্ত কারও সাথে কথা বলুন",
+        "pixabay_query": "two friends talking cafe"
+      }
+    ]
+  },
+  {
+    "topic_slug": "sunk-cost-fallacy-staying-too-long",
+    "research_insight": "সানক কস্ট ফ্যালাসি (ডুবে যাওয়া খরচের ফাঁদ): যা ইতিমধ্যে সময়, টাকা বা আবেগ হিসেবে খরচ হয়ে গেছে, তার কারণে আমরা ভবিষ্যতে ক্ষতিকর সিদ্ধান্ত চালিয়ে যাই। আর্কস ও ব্লামারের ১৯৮৫ সালের গবেষণায় দেখা গেছে, পুরো দামে টিকিট কেনা দর্শকেরা ছাড়ে কেনাদের চেয়ে বেশি অনুষ্ঠানে গিয়েছে।",
+    "thumbnail_hook": "এতদিন দিয়েছি, তাই?",
+    "yt_title": "এতদিন দিয়েছি, তাই ছাড়তে পারছি না? #Shorts",
+    "yt_description": "যে পড়াশোনা, সম্পর্ক বা চাকরিতে আর সুখ নেই, তবু শুধু অনেক সময় দিয়েছেন বলে ছাড়তে পারছেন না? এটাই সানক কস্ট ফ্যালাসি। জানুন কীভাবে ডুবে যাওয়া খরচের ফাঁদ থেকে বের হবেন।\n\nMind Decode Bangla-তে সিদ্ধান্ত ও মনের বিজ্ঞান।\n\n#SunkCost #BanglaPsychology #MindDecodeBangla #Shorts #সিদ্ধান্ত",
+    "yt_tags": [
+      "Bangla Psychology",
+      "Human Behavior",
+      "Mind Decode Bangla",
+      "Shorts",
+      "Sunk Cost Fallacy",
+      "Decision Making",
+      "Career Pressure"
+    ],
+    "fb_caption": "অনেক সময় বা টাকা খরচ করে ফেলেছি বলে কি আপনি এমন কিছুতে আটকে আছেন, যেটা আর ভালো লাগে না? নিজেকে জিজ্ঞেস করুন, আজ নতুন করে শুরু করলে কি আবার এটাই বেছে নিতাম? আপনার উত্তর কমেন্টে জানান।\n\n#SunkCost #BanglaPsychology #MindDecodeBangla #Decision",
+    "x_post": "যা গেছে তা ফিরবে না, কিন্তু ভুল পথে থাকলে ভবিষ্যৎও যাবে। ছেড়ে দেওয়া সবসময় হার নয়। #SunkCost #BanglaPsychology",
+    "scenes": [
+      {
+        "narration": "চার বছর পড়াশোনা করেছেন, এখন আর ভালো লাগে না, তবুও ছাড়তে পারেন না।",
+        "screen_text": "ভালো লাগে না, তবুও থেকে যাই",
+        "pixabay_query": "student bored studying"
+      },
+      {
+        "narration": "কিংবা এমন সম্পর্ক, যেখানে অনেক বছর দিয়েছেন, অথচ সুখ আর নেই।",
+        "screen_text": "অনেক বছর দিয়েছি, সুখ নেই",
+        "pixabay_query": "couple sitting apart bench"
+      },
+      {
+        "narration": "তখন মন বলে, এতদিন যখন দিয়েছি, এখন ছাড়লে সবটাই বৃথা হয়ে যাবে।",
+        "screen_text": "এখন ছাড়লে সব বৃথা!",
+        "pixabay_query": "hourglass sand falling"
+      },
+      {
+        "narration": "মনোবিজ্ঞানে একে বলে সানক কস্ট ফ্যালাসি, মানে ডুবে যাওয়া খরচের ফাঁদ।",
+        "screen_text": "ডুবে যাওয়া খরচের ফাঁদ",
+        "pixabay_query": "coins falling water"
+      },
+      {
+        "narration": "এক গবেষণায়, পুরো দামে টিকিট কেনা দর্শক, ছাড়ে কেনাদের চেয়ে বেশি অনুষ্ঠানে গেছে।",
+        "screen_text": "বেশি দাম দিলে বেশি আঁকড়ে ধরি",
+        "pixabay_query": "hand holding tickets"
+      },
+      {
+        "narration": "যা গেছে তা আর ফিরবে না, কিন্তু ভুল পথে থাকলে ভবিষ্যৎও যাবে।",
+        "screen_text": "অতীত গেছে, ভবিষ্যৎ বাঁচান",
+        "pixabay_query": "empty road fog"
+      },
+      {
+        "narration": "নিজেকে জিজ্ঞেস করুন, আজ নতুন করে শুরু করলে, কি আবার এটাই বেছে নিতাম?",
+        "screen_text": "আবার শুরু করলে এটাই বাছতাম?",
+        "pixabay_query": "signpost crossroads sunset"
+      },
+      {
+        "narration": "ছেড়ে দেওয়া সবসময় হার নয়, কখনো সেটাই সবচেয়ে সাহসী সিদ্ধান্ত, আপনি কী ভাবেন?",
+        "screen_text": "ছাড়া মানেই হার নয়",
+        "pixabay_query": "open door sunlight"
+      }
+    ]
+  },
+  {
+    "topic_slug": "negativity-bias-harsh-words-stick",
+    "research_insight": "নেগেটিভিটি বায়াস: মস্তিষ্ক ইতিবাচক অভিজ্ঞতার চেয়ে নেতিবাচক অভিজ্ঞতাকে বেশি গুরুত্ব দেয় এবং বেশিদিন মনে রাখে (বাউমাইস্টার ও সহকর্মীদের ২০০১ সালের গবেষণা-পর্যালোচনা)। গবেষক জন গটম্যানের পর্যবেক্ষণে, সুখী দম্পতিদের একটি নেতিবাচক মুহূর্তের বিপরীতে প্রায় পাঁচটি ইতিবাচক মুহূর্ত থাকে।",
+    "thumbnail_hook": "একটা কথা, সারাজীবন",
+    "yt_title": "কেন একটা কটু কথা বছরের পর বছর মনে থাকে? #Shorts",
+    "yt_description": "দশটা প্রশংসা ভুলে গেলেও একটা তিরস্কার কেন মনে গেঁথে থাকে? এটাই নেগেটিভিটি বায়াস। জানুন মস্তিষ্ক কেন খারাপ কথাকে বেশি গুরুত্ব দেয় এবং কীভাবে ভালো কথার জোর বাড়াবেন।\n\nMind Decode Bangla-তে মনের গোপন নিয়ম।\n\n#NegativityBias #BanglaPsychology #MindDecodeBangla #Shorts #মনোবিজ্ঞান",
+    "yt_tags": [
+      "Bangla Psychology",
+      "Human Behavior",
+      "Mind Decode Bangla",
+      "Shorts",
+      "Negativity Bias",
+      "Words Matter",
+      "Parenting Psychology"
+    ],
+    "fb_caption": "ছোটবেলার একটা তিরস্কার কি আজও আপনার কানে বাজে? মস্তিষ্ক খারাপ অভিজ্ঞতাকে বেশি করে মনে রাখে, তাই ভালো কথার মূল্য আরও বেশি। আজ কাকে একটা মিষ্টি কথা বলবেন? কমেন্টে লিখুন।\n\n#NegativityBias #BanglaPsychology #MindDecodeBangla #Kindness",
+    "x_post": "মস্তিষ্ক খারাপ কথাকে বেশি মনে রাখে, তাই আপনার একটা ভালো কথা কারও জন্য অনেক বড়। আজ কাউকে বলুন। #NegativityBias #BanglaPsychology",
+    "scenes": [
+      {
+        "narration": "দশটা প্রশংসা ভুলে যাই, অথচ একটা কটু কথা বছরের পর বছর মনে থাকে।",
+        "screen_text": "দশ প্রশংসা ভুলি, এক আঘাত নয়",
+        "pixabay_query": "man sitting alone sofa"
+      },
+      {
+        "narration": "ছোটবেলায় কারও বলা একটা তিরস্কার, আজও কানে বাজে, তাই না?",
+        "screen_text": "আজও কানে বাজে সেই কথা",
+        "pixabay_query": "boy sad classroom"
+      },
+      {
+        "narration": "এর নাম নেগেটিভিটি বায়াস, মস্তিষ্ক খারাপ অভিজ্ঞতাকে বেশি গুরুত্ব দিয়ে মনে রাখে।",
+        "screen_text": "এর নাম নেগেটিভিটি বায়াস",
+        "pixabay_query": "glowing brain animation"
+      },
+      {
+        "narration": "কারণ, বিপদ চিনে রাখাই ছিল মানুষের টিকে থাকার সবচেয়ে পুরোনো কৌশল।",
+        "screen_text": "বিপদ মনে রাখাই টিকে থাকা",
+        "pixabay_query": "dark forest fog"
+      },
+      {
+        "narration": "গটম্যানের গবেষণায়, সুখী দম্পতিদের একটা তিক্ত মুহূর্তের বিপরীতে থাকে প্রায় পাঁচটা ভালো মুহূর্ত।",
+        "screen_text": "একটা তিক্ততা, পাঁচটা ভালো মুহূর্ত",
+        "pixabay_query": "stacked stones balance"
+      },
+      {
+        "narration": "তাই আমরা নিজের ভুল আর ব্যর্থতার কথাই, সবচেয়ে বেশি নিজেকে শোনাই।",
+        "screen_text": "নিজেকেই শোনাই নিজের ব্যর্থতা",
+        "pixabay_query": "woman reflection window night"
+      },
+      {
+        "narration": "যে মানুষটা আজ ভালো কিছু করল, তাকে মুখ ফুটে একটা প্রশংসা দিন।",
+        "screen_text": "মুখ ফুটে প্রশংসা করুন",
+        "pixabay_query": "people applauding smiling"
+      },
+      {
+        "narration": "আজ কাকে একটা মিষ্টি কথা বলবেন, কমেন্টে সেই কথাটা লিখে ফেলুন।",
+        "screen_text": "আজ কাকে ভালো কথা বলবেন?",
+        "pixabay_query": "friends hugging sunset"
+      }
+    ]
+  },
+  {
+    "topic_slug": "boys-dont-cry-emotional-suppression",
+    "research_insight": "জেমস গ্রস ও রবার্ট লেভেনসনের গবেষণায় (১৯৯৩) দেখা গেছে, আবেগ চেপে রাখলে অনুভূতি কমে না, বরং শরীরে চাপের প্রতিক্রিয়া বাড়তে পারে। ‘ছেলেরা কাঁদে না’ ধরনের প্রথাগত পুরুষত্বের ধারণা অনেক পুরুষকে মনের কষ্ট প্রকাশ করতে ও সাহায্য চাইতে নিরুৎসাহিত করে।",
+    "thumbnail_hook": "ছেলেরা কাঁদে না?",
+    "yt_title": "ছেলেরা কাঁদে না, এই কথাটাই কি ভেতরে ভাঙছে? #Shorts",
+    "yt_description": "ছোটবেলা থেকে শুনে আসা ‘ছেলেরা কাঁদে না’ কথাটা বড় হয়ে মানুষটাকে নীরব করে দেয়। গবেষণা বলছে, আবেগ চেপে রাখলে কষ্ট কমে না। জানুন কেন মনের কথা বলা দুর্বলতা নয়, সাহস।\n\nকথা বলতে কষ্ট হলে বিশ্বস্ত কারও সাথে বা মনোবিদের সাথে কথা বলুন। Mind Decode Bangla-র সাথে থাকুন।\n\n#BoysDontCry #BanglaPsychology #MindDecodeBangla #Shorts #মানসিকস্বাস্থ্য",
+    "yt_tags": [
+      "Bangla Psychology",
+      "Human Behavior",
+      "Mind Decode Bangla",
+      "Shorts",
+      "Boys Dont Cry",
+      "Emotional Suppression",
+      "Mental Health Bangla"
+    ],
+    "fb_caption": "ছেলেরা কাঁদে না, এই কথাটা শুনতে শুনতে অনেকেই বড় হয়েছে, কিন্তু কষ্ট তো সবারই হয়। কান্না দুর্বলতা নয়, মনের কথা বলতে পারাটাই সাহস। আজ কাউকে একটা সত্যি কথা বলুন। আপনার কী মনে হয়? কমেন্টে জানান।\n\n#BoysDontCry #BanglaPsychology #MindDecodeBangla #MentalHealth",
+    "x_post": "ছেলেরা কাঁদে না, এই কথাটা ভেতরে ভেতরে অনেককে ভেঙেছে। কান্না দুর্বলতা নয়, মনের কথা বলাই সাহস। #MentalHealth #BanglaPsychology",
+    "scenes": [
+      {
+        "narration": "ছোটবেলায় পড়ে গিয়ে কাঁদলে, অনেক ছেলেই শুনেছে, ছেলেরা কাঁদে না, শক্ত হও।",
+        "screen_text": "ছেলেরা কাঁদে না, শক্ত হও",
+        "pixabay_query": "sad little boy sitting"
+      },
+      {
+        "narration": "তারপর সেই ছেলেটাই বড় হয়ে, কষ্ট হলেও মুখে হাসি ঝুলিয়ে রাখে।",
+        "screen_text": "কষ্টেও মুখে হাসি ঝুলিয়ে",
+        "pixabay_query": "man looking mirror tired"
+      },
+      {
+        "narration": "আবেগ চেপে রাখলে মনে হয় কষ্ট কমে গেছে, কিন্তু আসলে তা কমে না।",
+        "screen_text": "চেপে রাখলে কষ্ট কমে না",
+        "pixabay_query": "man hand on chest"
+      },
+      {
+        "narration": "গবেষণা বলছে, আবেগ লুকালে অনুভূতি কমে না, শরীরে চাপ বরং বাড়তে পারে।",
+        "screen_text": "আবেগ লুকালে শরীরে চাপ বাড়ে",
+        "pixabay_query": "heart rate monitor"
+      },
+      {
+        "narration": "তাই অনেক পুরুষ রাগ, নীরবতা বা ব্যস্ততার আড়ালে নিজের কষ্ট লুকায়।",
+        "screen_text": "রাগ-নীরবতার আড়ালে লুকানো কষ্ট",
+        "pixabay_query": "man sitting alone balcony night"
+      },
+      {
+        "narration": "ফলে মানুষটা ভেতরে ভেতরে ভাঙে, আর কাছের মানুষরাও কিছু টের পায় না।",
+        "screen_text": "ভেতরে ভাঙে, কেউ টের পায় না",
+        "pixabay_query": "man sitting alone dining table"
+      },
+      {
+        "narration": "কান্না কোনো দুর্বলতা নয়, মনের কথা বলতে পারাটাই আসল সাহসের কাজ।",
+        "screen_text": "কান্না দুর্বলতা নয়, সাহস",
+        "pixabay_query": "man standing mountain sunrise"
+      },
+      {
+        "narration": "আজ কাউকে অন্তত একটা সত্যি কথা বলুন, আপনার মনটা হালকা হবে।",
+        "screen_text": "আজ একজনকে মনের কথা বলুন",
+        "pixabay_query": "two men talking bench"
+      }
+    ]
+  },
+  {
+    "topic_slug": "bystander-effect-crowd-silence",
+    "research_insight": "বাইস্ট্যান্ডার ইফেক্ট: ডার্লি ও লাতানের ১৯৬৮ সালের গবেষণায় দেখা গেছে, উপস্থিত মানুষ যত বেশি, প্রত্যেকে ততটাই ভাবে ‘অন্য কেউ সাহায্য করবে’ (দায়িত্বের বিভাজন), ফলে এগিয়ে আসার সম্ভাবনা কমে। একা থাকা অংশগ্রহণকারীদের প্রায় ৮৫% সাহায্যে এগিয়েছিল, বড় দলে এই হার নেমে এসেছিল প্রায় ৩১%-এ।",
+    "thumbnail_hook": "ভিড়ে কেউ এগোয় না",
+    "yt_title": "ভিড়ে কেন কেউ সাহায্য করতে এগোয় না? #Shorts",
+    "yt_description": "রাস্তায় কেউ বিপদে পড়লে, চারপাশে এত মানুষ থাকতেও কেন কেউ এগোয় না? এটাই বাইস্ট্যান্ডার ইফেক্ট। জানুন দায়িত্ব ভাগ হয়ে হারিয়ে যাওয়ার মনোবিজ্ঞান এবং আপনি কীভাবে প্রথম মানুষটা হতে পারেন।\n\nMind Decode Bangla-তে মানুষের আচরণের রহস্য।\n\n#BystanderEffect #BanglaPsychology #MindDecodeBangla #Shorts #মানবিকতা",
+    "yt_tags": [
+      "Bangla Psychology",
+      "Human Behavior",
+      "Mind Decode Bangla",
+      "Shorts",
+      "Bystander Effect",
+      "Social Psychology",
+      "Humanity"
+    ],
+    "fb_caption": "যত বেশি মানুষ, সাহায্যে এগিয়ে আসার সম্ভাবনা তত কম, কারণ প্রত্যেকে ভাবে অন্য কেউ যাবে। পরের বার ভিড়ে এমন কিছু দেখলে আপনি কি প্রথম মানুষটা হবেন? কমেন্টে জানান।\n\n#BystanderEffect #BanglaPsychology #MindDecodeBangla #Humanity",
+    "x_post": "ভিড় যত বড়, সাহায্য তত কম, কারণ প্রত্যেকে ভাবে অন্য কেউ যাবে। পরের বার প্রথম মানুষটা হোন। #BystanderEffect #BanglaPsychology",
+    "scenes": [
+      {
+        "narration": "রাস্তায় একজন মানুষ পড়ে আছে, চারপাশে ভিড়, অথচ কেউ এগোচ্ছে না।",
+        "screen_text": "ভিড় আছে, সাহায্য নেই",
+        "pixabay_query": "crowd gathered street"
+      },
+      {
+        "narration": "সবাই তাকিয়ে দেখছে, কেউ ফোন বের করছে, কেউ ভাবছে অন্য কেউ যাবে।",
+        "screen_text": "সবাই ভাবছে, অন্য কেউ যাবে",
+        "pixabay_query": "people holding smartphones crowd"
+      },
+      {
+        "narration": "মানুষ কি আসলেই নিষ্ঠুর হয়ে গেছে, নাকি এর পেছনে আছে মনোবিজ্ঞান?",
+        "screen_text": "নিষ্ঠুরতা, নাকি মনোবিজ্ঞান?",
+        "pixabay_query": "man thinking close up"
+      },
+      {
+        "narration": "এর নাম বাইস্ট্যান্ডার ইফেক্ট, যত বেশি মানুষ, সাহায্য করার সম্ভাবনা তত কম।",
+        "screen_text": "যত ভিড়, তত কম সাহায্য",
+        "pixabay_query": "large crowd walking"
+      },
+      {
+        "narration": "কারণ প্রত্যেকে ভাবে, দায়িত্বটা আমার একার নয়, নিশ্চয়ই কেউ না কেউ এগোবে।",
+        "screen_text": "দায়িত্ব ভাগ হয়ে হারিয়ে যায়",
+        "pixabay_query": "people standing waiting street"
+      },
+      {
+        "narration": "ডার্লি আর লাতানের পরীক্ষায়, একা থাকলে বেশিরভাগ মানুষ সাহায্যে এগিয়ে গেছে।",
+        "screen_text": "একা থাকলে মানুষ এগিয়ে যায়",
+        "pixabay_query": "man helping elderly woman"
+      },
+      {
+        "narration": "আর যদি আপনি বিপদে পড়েন, ভিড়ের একজনকে বেছে নিয়ে সরাসরি সাহায্য চান।",
+        "screen_text": "একজনকে বেছে সরাসরি বলুন",
+        "pixabay_query": "pointing finger close up"
+      },
+      {
+        "narration": "পরের বার ভিড়ে এমন কিছু দেখলে, আপনি কি প্রথম মানুষটা হবেন?",
+        "screen_text": "আপনিই কি প্রথম মানুষ হবেন?",
+        "pixabay_query": "hand reaching helping hand"
+      }
+    ]
+  },
+  {
+    "topic_slug": "procrastination-is-emotion-not-laziness",
+    "research_insight": "সিরোয়া ও পাইকিলের গবেষণা অনুযায়ী, কাজ পিছিয়ে দেওয়া সাধারণত অলসতা নয়; এটি কাজ-সংক্রান্ত অস্বস্তিকর অনুভূতি (ভয়, উদ্বেগ, অনিশ্চয়তা) এড়িয়ে তাৎক্ষণিক স্বস্তি পাওয়ার একটি উপায়। ২০১০ সালের এক গবেষণায় দেখা গেছে, প্রথম পরীক্ষায় নিজেকে ক্ষমা করতে পারা শিক্ষার্থীরা পরের পরীক্ষায় কম পিছিয়েছে।",
+    "thumbnail_hook": "আপনি অলস নন",
+    "yt_title": "কাজ পিছিয়ে দেন? আপনি অলস নন, এটাই আসল কারণ #Shorts",
+    "yt_description": "পরীক্ষা বা কাজ সামনে থাকলেও কেন আমরা ফোনেই ডুবে থাকি আর নিজেকে অলস বলি? গবেষণা বলে, কাজ পিছিয়ে দেওয়া অলসতা নয়, অস্বস্তিকর আবেগ এড়ানোর চেষ্টা। জানুন কীভাবে পাঁচ মিনিটে শুরু করবেন।\n\nMind Decode Bangla-তে মনের কাজের নিয়ম।\n\n#Procrastination #BanglaPsychology #MindDecodeBangla #Shorts #পড়াশোনা",
+    "yt_tags": [
+      "Bangla Psychology",
+      "Human Behavior",
+      "Mind Decode Bangla",
+      "Shorts",
+      "Procrastination",
+      "Study Motivation",
+      "Self Compassion"
+    ],
+    "fb_caption": "কাজ পিছিয়ে দিয়ে নিজেকে দোষ দিচ্ছেন? আপনি হয়তো অলস নন, ভয় বা দুশ্চিন্তা এড়াতে চাইছেন। আজ শুধু পাঁচ মিনিট শুরু করুন, আর নিজেকে ক্ষমা করতে শিখুন। আপনি কি কাজ পিছিয়ে দেন? কমেন্টে জানান।\n\n#Procrastination #BanglaPsychology #MindDecodeBangla #Productivity",
+    "x_post": "কাজ পিছিয়ে দেওয়া অলসতা নয়, অস্বস্তিকর অনুভূতি এড়ানোর চেষ্টা। শুধু পাঁচ মিনিট শুরু করুন। #Procrastination #BanglaPsychology",
+    "scenes": [
+      {
+        "narration": "পরীক্ষা সামনে, অথচ আপনি বই না খুলে ফোনই ঘাঁটছেন, আর নিজেকে দোষ দিচ্ছেন।",
+        "screen_text": "পড়ার সময় ফোনই হাতে",
+        "pixabay_query": "student distracted phone books"
+      },
+      {
+        "narration": "মনে মনে ভাবছেন, আমি খুব অলস, আমার দ্বারা আর কিছুই হবে না।",
+        "screen_text": "আমি অলস, কিছুই হবে না",
+        "pixabay_query": "man head in hands desk"
+      },
+      {
+        "narration": "কিন্তু গবেষণা বলে, কাজ পিছিয়ে দেওয়া অলসতা নয়, এটা আবেগের ব্যাপার।",
+        "screen_text": "পিছিয়ে দেওয়া অলসতা নয়",
+        "pixabay_query": "clock desk close up"
+      },
+      {
+        "narration": "কাজটার সাথে জড়ানো ভয়, দুশ্চিন্তা বা অনিশ্চয়তা এড়াতেই, মন সরে যায়।",
+        "screen_text": "ভয় এড়াতেই মন সরে যায়",
+        "pixabay_query": "nervous student exam"
+      },
+      {
+        "narration": "ফোন খুললে সঙ্গে সঙ্গে স্বস্তি মেলে, তাই মস্তিষ্ক সেটাকেই বেছে নেয়।",
+        "screen_text": "সাময়িক স্বস্তিই মস্তিষ্কের পছন্দ",
+        "pixabay_query": "thumb scrolling phone"
+      },
+      {
+        "narration": "কিন্তু সময় যায়, অপরাধবোধ বাড়ে, আর ভয়টা আগের চেয়েও বড় হয়।",
+        "screen_text": "সময় যায়, অপরাধবোধ বাড়ে",
+        "pixabay_query": "clock hands moving fast"
+      },
+      {
+        "narration": "তাই শুধু পাঁচ মিনিটের জন্য শুরু করুন, আর নিজেকে ক্ষমা করতে শিখুন।",
+        "screen_text": "শুধু পাঁচ মিনিট শুরু করুন",
+        "pixabay_query": "student writing notebook morning"
+      },
+      {
+        "narration": "গবেষণা বলে, নিজেকে ক্ষমা করলে মানুষ পরেরবার কম পিছোয়, আপনার অভিজ্ঞতা কী?",
+        "screen_text": "আপনি কি কাজ পিছিয়ে দেন?",
+        "pixabay_query": "man smiling laptop work"
       }
     ]
   }
