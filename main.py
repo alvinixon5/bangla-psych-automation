@@ -102,7 +102,7 @@ def save_history(history: dict):
 
 
 async def generate_voiceover(text: str, output_mp3: str):
-    communicate = edge_tts.Communicate(text, VOICE, rate="-6%", pitch="+5%")
+    communicate = edge_tts.Communicate(text, VOICE, rate="-6%", pitch="+5Hz")
     await communicate.save(output_mp3)
 
 def prepare_bgm_track() -> str | None:
