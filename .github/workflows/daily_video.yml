@@ -50,6 +50,16 @@ jobs:
           FB_ACCESS_TOKEN: ${{ secrets.FB_ACCESS_TOKEN }}
         run: python main.py
 
+      - name: Upload Generated Thumbnail & Videos as Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mind-decode-media-${{ github.run_number }}
+          path: |
+            temp/thumb_yt.jpg
+            temp/video_fb.mp4
+          retention-days: 3
+
       - name: Save Updated History & Queue
         run: |
           git config user.name "github-actions[bot]"
