@@ -55,12 +55,40 @@ async def generate_scene_voiceover(text: str, output_mp3: str, scene_index: int,
     await communicate.save(output_mp3)
 
 
+def sanitize_and_verify_video(raw_path: str, clean_path: str) -> bool:
+    """Pixabay ভিডিওর অতিরিক্ত মেটাডাটা/টাইমকোড ট্র্যাক সরিয়ে MoviePy-উপযোগী করে এবং যাচাই করে"""
+    try:
+        cmd = [
+            "ffmpeg", "-y",
+            "-i", raw_path,
+            "-map", "0:v:0",
+            "-an",
+            "-c:v", "libx264",
+            "-preset", "ultrafast",
+            "-crf", "23",
+            "-pix_fmt", "yuv420p",
+            "-r", "24",
+            "-movflags", "+faststart",
+            clean_path,
+        ]
+        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+        test_clip = VideoFileClip(clean_path)
+        dur = test_clip.duration
+        test_clip.close()
+        return bool(dur and dur > 1.0)
+    except Exception:
+        return False
+
+
 def download_pixabay_video(query: str, output_path: str, used_ids: set) -> bool:
     api_key = os.getenv("PIXABAY_API_KEY")
     if not api_key:
         return False
 
+    temp_dl = output_path + ".dl.mp4"
     search_queries = [query, "dark moody night city", "person thinking alone", "abstract dark background"]
+
     for q in search_queries:
         url = "https://pixabay.com/api/videos/"
         params = {
@@ -83,22 +111,24 @@ def download_pixabay_video(query: str, output_path: str, used_ids: set) -> bool:
                     vid_url = video_info["url"]
                     r = requests.get(vid_url, stream=True, timeout=30)
                     if r.status_code == 200:
-                        with open(output_path, "wb") as f:
+                        with open(temp_dl, "wb") as f:
                             for chunk in r.iter_content(chunk_size=8192):
                                 f.write(chunk)
-                        used_ids.add(vid_id)
-                        return True
+
+                        is_valid = sanitize_and_verify_video(temp_dl, output_path)
+                        if os.path.exists(temp_dl):
+                            os.remove(temp_dl)
+
+                        if is_valid:
+                            used_ids.add(vid_id)
+                            return True
         except Exception as e:
             print(f"   [Pixabay Warning] '{q}' সার্চে সমস্যা: {e}")
     return False
 
 
 def download_lofi_bgm(output_path: str) -> bool:
-    """Pixabay থেকে মৃদু পিয়ানো বা অ্যাম্বিয়েন্ট ব্যাকগ্রাউন্ড মিউজিক আনার চেষ্টা করে"""
-    api_key = os.getenv("PIXABAY_API_KEY")
-    if not api_key:
-        return False
-    # ব্যাকআপ হিসেবে বিল্ট-ইন সফট অ্যাম্বিয়েন্ট টোন তৈরি করা হবে যদি অডিও না পাওয়া যায়
+    """মৃদু অ্যাম্বিয়েন্ট ব্যাকগ্রাউন্ড টোন তৈরি করে"""
     try:
         cmd = [
             "ffmpeg", "-y",
@@ -160,7 +190,6 @@ def create_subtitle_overlay(text: str, width: int, height: int, output_png: str)
     box_x2 = box_x1 + box_w
     box_y2 = box_y1 + box_h
 
-    # সেমি-ট্রান্সপারেন্ট ডার্ক কার্ড ব্যাকগ্রাউন্ড
     draw.rounded_rectangle(
         [box_x1, box_y1, box_x2, box_y2],
         radius=24,
@@ -180,8 +209,7 @@ def create_subtitle_overlay(text: str, width: int, height: int, output_png: str)
     img.save(output_png, "PNG")
 
 
-def create_thumbnail(hook_text: str, bg_video_path: str, output_jpg: str):
-    width, height = 1080, 1920
+def create_thumbnail(hook_text: str, bg_video_path: str, output_jpg: str, width: int = 1080, height: int = 1920):
     frame_img = Image.new("RGB", (width, height), (18, 20, 28))
 
     if bg_video_path and os.path.exists(bg_video_path):
@@ -204,21 +232,21 @@ def create_thumbnail(hook_text: str, bg_video_path: str, output_jpg: str):
         except Exception:
             pass
 
-    overlay = Image.new("RGBA", (width, height), (0, 0, 0, 130))
+    overlay = Image.new("RGBA", (width, height), (0, 0, 0, 135))
     frame_img = Image.alpha_composite(frame_img.convert("RGBA"), overlay)
     draw = ImageDraw.Draw(frame_img)
 
-    font = get_bengali_font(92)
+    font = get_bengali_font(int(width * 0.085))
     lines = textwrap.wrap(hook_text, width=14)
-    y_start = int(height * 0.42)
+    y_start = int(height * 0.40)
     for line in lines:
         bbox = draw.textbbox((0, 0), line, font=font)
         w = bbox[2] - bbox[0]
         h = bbox[3] - bbox[1]
         x = (width - w) // 2
-        draw.text((x + 4, y_start + 4), line, font=font, fill=(0, 0, 0, 220))
+        draw.text((x + 4, y_start + 4), line, font=font, fill=(0, 0, 0, 225))
         draw.text((x, y_start), line, font=font, fill=(255, 220, 90, 255))
-        y_start += h + 30
+        y_start += h + 28
 
     frame_img.convert("RGB").save(output_jpg, "JPEG", quality=92)
 
@@ -300,7 +328,7 @@ def main():
 
         downloaded = download_pixabay_video(scene.pixabay_query, scene_mp4, used_video_ids)
         if not downloaded:
-            raise RuntimeError(f"দৃশ্য {idx + 1}-এর জন্য Pixabay থেকে কোনো ভিডিও পাওয়া যায়নি।")
+            raise RuntimeError(f"দৃশ্য {idx + 1}-এর জন্য Pixabay থেকে কোনো বৈধ ভিডিও পাওয়া যায়নি।")
 
         scene_assets.append({
             "index": idx,
@@ -312,19 +340,25 @@ def main():
         audio_clip.close()
 
     print("৩. কাস্টম থাম্বনেইল এবং BGM প্রস্তুত হচ্ছে...")
-    thumb_path = os.path.join(TEMP_DIR, "thumb_yt.jpg")
-    create_thumbnail(pkg.thumbnail_hook, scene_assets[0]["mp4"], thumb_path)
+    thumb_yt_path = os.path.join(TEMP_DIR, "thumb_yt.jpg")
+    create_thumbnail(pkg.thumbnail_hook, scene_assets[0]["mp4"], thumb_yt_path, 1080, 1920)
 
     bgm_path = os.path.join(TEMP_DIR, "soft_bgm.mp3")
     has_bgm = download_lofi_bgm(bgm_path)
 
-    rendered_files = {"thumb_yt": thumb_path}
+    rendered_files = {"thumb_yt": thumb_yt_path}
 
     print("৪. ভিডিও রেন্ডারিং ও -14 LUFS অডিও মিক্সিং শুরু হচ্ছে...")
     for variant_key, (w, h, filename) in VARIANTS.items():
         print(f"   -> {variant_key} ({w}x{h}) তৈরি হচ্ছে...")
         clips_to_concat = []
         opened_resources = []
+
+        # ভিডিওর একদম শুরুতে ০.৪ সেকেন্ডের কাস্টম থাম্বনেইল কভার কার্ড যুক্ত করা হচ্ছে
+        variant_thumb = os.path.join(TEMP_DIR, f"thumb_{variant_key}.jpg")
+        create_thumbnail(pkg.thumbnail_hook, scene_assets[0]["mp4"], variant_thumb, w, h)
+        intro_thumb_clip = ImageClip(variant_thumb).with_duration(0.4)
+        clips_to_concat.append(intro_thumb_clip)
 
         for asset in scene_assets:
             idx = asset["index"]
