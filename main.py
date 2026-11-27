@@ -2,6 +2,7 @@ import os
 import json
 import asyncio
 import random
+import urllib.parse
 import subprocess
 import textwrap
 import requests
@@ -18,6 +19,7 @@ FONT_PATH = "fonts/BanglaBold.ttf"
 
 VOICE = "bn-BD-NabanitaNeural"
 BASE_PITCH = "-4Hz"
+RENDER_FPS = 24
 
 VARIANTS = {
     "vertical_9x16": (1080, 1920, "video_yt.mp4"),   # YouTube Shorts
@@ -55,76 +57,91 @@ async def generate_scene_voiceover(text: str, output_mp3: str, scene_index: int,
     await communicate.save(output_mp3)
 
 
-def sanitize_and_verify_video(raw_path: str, clean_path: str) -> bool:
-    """Pixabay ভিডিওর অতিরিক্ত মেটাডাটা/টাইমকোড ট্র্যাক সরিয়ে MoviePy-উপযোগী করে এবং যাচাই করে"""
-    try:
-        cmd = [
-            "ffmpeg", "-y",
-            "-i", raw_path,
-            "-map", "0:v:0",
-            "-an",
-            "-c:v", "libx264",
-            "-preset", "ultrafast",
-            "-crf", "23",
-            "-pix_fmt", "yuv420p",
-            "-r", "24",
-            "-movflags", "+faststart",
-            clean_path,
-        ]
-        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+def render_fallback_character_art(output_png: str, scene_index: int):
+    """বাহ্যিক ইমেজ API সাময়িকভাবে ব্যস্ত থাকলে ডার্ক-সাইকোলজি ভেক্টর আর্ট তৈরি করে"""
+    w, h = 1080, 1920
+    img = Image.new("RGB", (w, h), (11, 15, 25))
+    draw = ImageDraw.Draw(img)
 
-        test_clip = VideoFileClip(clean_path)
-        dur = test_clip.duration
-        test_clip.close()
-        return bool(dur and dur > 1.0)
-    except Exception:
-        return False
+    accent_palettes = [
+        ((56, 189, 248), (19, 42, 70)),    # Cyan glow
+        ((251, 191, 36), (55, 40, 20)),    # Warm amber glow
+        ((167, 139, 250), (38, 28, 68)),   # Soft violet glow
+    ]
+    accent, ring_base = accent_palettes[scene_index % len(accent_palettes)]
+
+    cx, cy = w // 2, int(h * 0.42)
+    for step in range(4, 0, -1):
+        radius = step * 115
+        shade = tuple(min(255, int(c * (1.3 - step * 0.15))) for c in ring_base)
+        draw.ellipse((cx - radius, cy - radius, cx + radius, cy + radius), fill=shade)
+
+    # মিনিমালিস্ট হুডেড ক্যারেক্টার সিলুয়েট
+    draw.ellipse((cx - 115, cy - 155, cx + 115, cy + 75), fill=(7, 10, 18), outline=accent, width=4)
+    draw.pieslice((cx - 220, cy + 45, cx + 220, cy + 430), start=180, end=360, fill=(7, 10, 18), outline=accent, width=4)
+
+    # সূক্ষ্ম গ্লোয়িং চোখ
+    draw.ellipse((cx - 48, cy - 45, cx - 24, cy - 33), fill=accent)
+    draw.ellipse((cx + 24, cy - 45, cx + 48, cy - 33), fill=accent)
+
+    img.save(output_png, "PNG")
 
 
-def download_pixabay_video(query: str, output_path: str, used_ids: set) -> bool:
-    api_key = os.getenv("PIXABAY_API_KEY")
-    if not api_key:
-        return False
+def generate_scene_illustration(visual_prompt: str, output_png: str, scene_index: int):
+    """প্রতিটি দৃশ্যের জন্য ফ্রি Flux API দিয়ে কাস্টম ২ডি ক্যারেক্টার ইলাস্ট্রেশন তৈরি করে"""
+    encoded_prompt = urllib.parse.quote(visual_prompt)
+    seed = random.randint(1000, 999999)
+    url = (
+        f"https://image.pollinations.ai/prompt/{encoded_prompt}"
+        f"?width=1080&height=1920&nologo=true&seed={seed}&model=flux"
+    )
 
-    temp_dl = output_path + ".dl.mp4"
-    search_queries = [query, "dark moody night city", "person thinking alone", "abstract dark background"]
-
-    for q in search_queries:
-        url = "https://pixabay.com/api/videos/"
-        params = {
-            "key": api_key,
-            "q": q,
-            "per_page": 10,
-            "safesearch": "true",
-        }
+    for attempt in range(2):
         try:
-            res = requests.get(url, params=params, timeout=20).json()
-            hits = res.get("hits", [])
-            random.shuffle(hits)
-            for hit in hits:
-                vid_id = hit.get("id")
-                if vid_id in used_ids:
-                    continue
-                videos = hit.get("videos", {})
-                video_info = videos.get("medium") or videos.get("small") or videos.get("large")
-                if video_info and video_info.get("url"):
-                    vid_url = video_info["url"]
-                    r = requests.get(vid_url, stream=True, timeout=30)
-                    if r.status_code == 200:
-                        with open(temp_dl, "wb") as f:
-                            for chunk in r.iter_content(chunk_size=8192):
-                                f.write(chunk)
-
-                        is_valid = sanitize_and_verify_video(temp_dl, output_path)
-                        if os.path.exists(temp_dl):
-                            os.remove(temp_dl)
-
-                        if is_valid:
-                            used_ids.add(vid_id)
-                            return True
+            resp = requests.get(url, timeout=45)
+            if resp.status_code == 200 and len(resp.content) > 15000:
+                with open(output_png, "wb") as f:
+                    f.write(resp.content)
+                with Image.open(output_png) as im:
+                    im = im.convert("RGB").resize((1080, 1920), Image.Resampling.LANCZOS)
+                    im.save(output_png, "PNG")
+                return
         except Exception as e:
-            print(f"   [Pixabay Warning] '{q}' সার্চে সমস্যা: {e}")
-    return False
+            print(f"   [Illustration Retry {attempt + 1}] দৃশ্য {scene_index + 1}: {e}")
+
+    render_fallback_character_art(output_png, scene_index)
+
+
+def animate_illustration_to_clip(image_png: str, output_mp4: str, duration: float, motion: str) -> bool:
+    """স্থির ২ডি ইলাস্ট্রেশনে স্মুথ জুম-ইন, জুম-আউট বা প্যান এনিমেশন যোগ করে MP4 তৈরি করে"""
+    total_frames = max(int(round(duration * RENDER_FPS)), RENDER_FPS * 2)
+
+    if motion == "zoom_out":
+        zp = "z='if(eq(on,1),1.14,max(1.00,zoom-0.0006))':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
+    elif motion == "pan_right":
+        zp = f"z='1.10':x='(iw-iw/zoom)*(on/{total_frames})':y='ih/2-(ih/zoom/2)'"
+    elif motion == "pan_left":
+        zp = f"z='1.10':x='(iw-iw/zoom)*(1-on/{total_frames})':y='ih/2-(ih/zoom/2)'"
+    else:  # zoom_in
+        zp = "z='min(zoom+0.0006,1.14)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
+
+    vf = f"scale=2160:3840,zoompan={zp}:d={total_frames}:s=1080x1920:fps={RENDER_FPS}"
+
+    cmd = [
+        "ffmpeg", "-y",
+        "-i", image_png,
+        "-vf", vf,
+        "-frames:v", str(total_frames),
+        "-c:v", "libx264",
+        "-preset", "veryfast",
+        "-crf", "21",
+        "-pix_fmt", "yuv420p",
+        "-r", str(RENDER_FPS),
+        "-movflags", "+faststart",
+        output_mp4,
+    ]
+    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return os.path.exists(output_mp4)
 
 
 def download_lofi_bgm(output_path: str) -> bool:
@@ -144,16 +161,19 @@ def download_lofi_bgm(output_path: str) -> bool:
 
 
 def get_bengali_font(size: int):
-    if os.path.exists(FONT_PATH):
-        return ImageFont.truetype(FONT_PATH, size)
-    fallback_fonts = [
-        "/usr/share/fonts/truetype/lohit-bengali/Lohit-Bengali.ttf",
+    font_paths = [
+        FONT_PATH,
         "/usr/share/fonts/truetype/noto/NotoSansBengali-Bold.ttf",
+        "/usr/share/fonts/truetype/noto/NotoSansBengali-Regular.ttf",
+        "/usr/share/fonts/truetype/lohit-bengali/Lohit-Bengali.ttf",
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
     ]
-    for fp in fallback_fonts:
+    for fp in font_paths:
         if os.path.exists(fp):
-            return ImageFont.truetype(fp, size)
+            try:
+                return ImageFont.truetype(fp, size, layout_engine=ImageFont.Layout.RAQM)
+            except Exception:
+                return ImageFont.truetype(fp, size)
     return ImageFont.load_default()
 
 
@@ -161,7 +181,7 @@ def create_subtitle_overlay(text: str, width: int, height: int, output_png: str)
     img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
-    font_size = int(width * 0.052)
+    font_size = int(width * 0.050)
     font = get_bengali_font(font_size)
 
     wrapped_lines = textwrap.wrap(text, width=22)
@@ -193,8 +213,8 @@ def create_subtitle_overlay(text: str, width: int, height: int, output_png: str)
     draw.rounded_rectangle(
         [box_x1, box_y1, box_x2, box_y2],
         radius=24,
-        fill=(12, 14, 20, 195),
-        outline=(255, 255, 255, 45),
+        fill=(11, 15, 25, 210),
+        outline=(56, 189, 248, 120),
         width=2,
     )
 
@@ -232,7 +252,7 @@ def create_thumbnail(hook_text: str, bg_video_path: str, output_jpg: str, width:
         except Exception:
             pass
 
-    overlay = Image.new("RGBA", (width, height), (0, 0, 0, 135))
+    overlay = Image.new("RGBA", (width, height), (0, 0, 0, 125))
     frame_img = Image.alpha_composite(frame_img.convert("RGBA"), overlay)
     draw = ImageDraw.Draw(frame_img)
 
@@ -308,27 +328,27 @@ def main():
     history = load_history()
     past_topics = history.get("topics", [])
 
-    print("১. সাইকোলজি স্ক্রিপ্ট সংগ্রহ করা হচ্ছে...")
+    print("১. সাইকোলজি স্ক্রিপ্ট ও এনিমেশন প্রম্পট তৈরি হচ্ছে...")
     pkg: ResearchedContentPackage = generate_researched_package(past_topics)
     print(f"   নির্বাচিত টপিক: {pkg.topic_slug} ({pkg.yt_title})")
 
-    print("২. প্রতিটি দৃশ্যের জন্য ডাইনামিক ভয়েসওভার ও স্টক ভিডিও সংগ্রহ হচ্ছে...")
-    used_video_ids = set()
+    print("২. প্রতিটি দৃশ্যের ডাইনামিক ভয়েসওভার ও কাস্টম ২ডি এনিমেশন তৈরি হচ্ছে...")
     scene_assets = []
     total_scenes = len(pkg.scenes)
 
     for idx, scene in enumerate(pkg.scenes):
         scene_mp3 = os.path.join(TEMP_DIR, f"scene_{idx}.mp3")
+        scene_png = os.path.join(TEMP_DIR, f"art_{idx}.png")
         scene_mp4 = os.path.join(TEMP_DIR, f"raw_{idx}.mp4")
 
         asyncio.run(generate_scene_voiceover(scene.narration, scene_mp3, idx, total_scenes))
         audio_clip = AudioFileClip(scene_mp3)
         # দৃশ্যের শেষে ০.৪ সেকেন্ড প্রাকৃতিক বিরতি (pause) যোগ করা হচ্ছে
         padded_duration = audio_clip.duration + 0.4
+        audio_clip.close()
 
-        downloaded = download_pixabay_video(scene.pixabay_query, scene_mp4, used_video_ids)
-        if not downloaded:
-            raise RuntimeError(f"দৃশ্য {idx + 1}-এর জন্য Pixabay থেকে কোনো বৈধ ভিডিও পাওয়া যায়নি।")
+        generate_scene_illustration(scene.visual_prompt, scene_png, idx)
+        animate_illustration_to_clip(scene_png, scene_mp4, padded_duration, scene.motion)
 
         scene_assets.append({
             "index": idx,
@@ -337,9 +357,8 @@ def main():
             "duration": padded_duration,
             "screen_text": scene.screen_text,
         })
-        audio_clip.close()
 
-    print("৩. কাস্টম থাম্বনেইল এবং BGM প্রস্তুত হচ্ছে...")
+    print("৩. কাস্টম এনিমেটেড থাম্বনেইল এবং BGM প্রস্তুত হচ্ছে...")
     thumb_yt_path = os.path.join(TEMP_DIR, "thumb_yt.jpg")
     create_thumbnail(pkg.thumbnail_hook, scene_assets[0]["mp4"], thumb_yt_path, 1080, 1920)
 
@@ -384,7 +403,7 @@ def main():
 
         final_raw.write_videofile(
             pre_bgm_path,
-            fps=24,
+            fps=RENDER_FPS,
             codec="libx264",
             audio_codec="aac",
             preset="veryfast",
