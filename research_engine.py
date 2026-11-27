@@ -1,161 +1,205 @@
 import os
 import json
 import re
-import time
-from dataclasses import dataclass, field
 import requests
+from dataclasses import dataclass, field
+from typing import List, Optional
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
-
-CONSISTENT_CHARACTER_STYLE = (
-    "minimalist 2D vector animation style like Psych2Go, dark moody slate blue "
-    "and deep charcoal background (#0B0F19), glowing cyan and warm amber rim lighting, "
-    "expressive minimalist hooded character, clean bold line art, emotional psychology "
-    "illustration, vertical composition, no text, no letters, no watermark"
-)
+QUEUE_FILE = "scripts_queue.json"
 
 
 @dataclass
 class SceneItem:
     narration: str
     screen_text: str
-    visual_prompt: str
-    motion: str = "zoom_in"
-    pixabay_query: str = ""
+    pixabay_query: str
+    animation_prompt: str = ""
+    illustration_prompt: str = ""
+
+    def __getattr__(self, name: str):
+        return self.pixabay_query
 
 
 @dataclass
 class ResearchedContentPackage:
     topic_slug: str
+    research_insight: str
+    thumbnail_hook: str
     yt_title: str
     yt_description: str
-    yt_tags: list = field(default_factory=list)
+    yt_tags: List[str] = field(default_factory=list)
     fb_caption: str = ""
     x_post: str = ""
-    thumbnail_hook: str = ""
-    scenes: list = field(default_factory=list)
+    scenes: List[SceneItem] = field(default_factory=list)
 
-    # uploader.py-এর সাথে পূর্ণ সামঞ্জস্য রাখার জন্য অ্যালিয়াস প্রোপার্টি
-    @property
-    def title(self) -> str:
-        return self.yt_title
-
-    @property
-    def description(self) -> str:
-        return self.yt_description
-
-    @property
-    def tags(self) -> list:
-        return self.yt_tags
-
-    @property
-    def caption(self) -> str:
-        return self.fb_caption
-
-    @property
-    def x_caption(self) -> str:
-        return self.x_post
+    def __getattr__(self, name: str):
+        return self.thumbnail_hook
 
 
-def _clean_json_response(raw_text: str) -> dict:
-    cleaned = re.sub(r"^```(?:json)?\s*", "", raw_text.strip(), flags=re.IGNORECASE)
-    cleaned = re.sub(r"\s*```$", "", cleaned.strip())
-    return json.loads(cleaned)
+def _build_package_from_dict(data: dict) -> ResearchedContentPackage:
+    raw_scenes = data.get("scenes", [])
+    scenes = []
+    for s in raw_scenes:
+        q = s.get("pixabay_query", "person thinking alone dark moody")
+        scenes.append(
+            SceneItem(
+                narration=s.get("narration", ""),
+                screen_text=s.get("screen_text", ""),
+                pixabay_query=q,
+                animation_prompt=s.get("animation_prompt", q),
+                illustration_prompt=s.get("illustration_prompt", q),
+            )
+        )
+
+    return ResearchedContentPackage(
+        topic_slug=data.get("topic_slug", "human-psychology-fact"),
+        research_insight=data.get("research_insight", ""),
+        thumbnail_hook=data.get("thumbnail_hook", "মনের গোপন রহস্য"),
+        yt_title=data.get("yt_title", "মানুষের মনের অজানা সাইকোলজি #Shorts"),
+        yt_description=data.get("yt_description", "#MindDecodeBangla #BanglaPsychology #Shorts"),
+        yt_tags=data.get("yt_tags", ["Bangla Psychology", "Human Behavior", "Mind Decode Bangla", "Shorts"]),
+        fb_caption=data.get("fb_caption", "মানুষের মনের এই আচরণটি কি আপনার সাথেও মিলে যায়? #MindDecodeBangla"),
+        x_post=data.get("x_post", "মানুষের মনের অজানা সাইকোলজি। #MindDecodeBangla #Psychology"),
+        scenes=scenes,
+    )
 
 
-def generate_researched_package(past_topics: list = None) -> ResearchedContentPackage:
-    if not GEMINI_API_KEY:
-        raise ValueError("GEMINI_API_KEY এনভায়রনমেন্ট ভেরিয়েবল সেট করা নেই।")
+def _pop_from_queue(past_topics: List[str]) -> Optional[ResearchedContentPackage]:
+    if not os.path.exists(QUEUE_FILE):
+        return None
 
-    avoid_list = ", ".join((past_topics or [])[-35:])
+    try:
+        with open(QUEUE_FILE, "r", encoding="utf-8") as f:
+            queue = json.load(f)
+    except Exception:
+        return None
+
+    if not isinstance(queue, list) or len(queue) == 0:
+        return None
+
+    past_set = set(past_topics)
+    selected_item = None
+    remaining_items = []
+
+    for item in queue:
+        slug = item.get("topic_slug", "")
+        if selected_item is None and slug and slug not in past_set:
+            selected_item = item
+        else:
+            remaining_items.append(item)
+
+    if selected_item is not None:
+        with open(QUEUE_FILE, "w", encoding="utf-8") as f:
+            json.dump(remaining_items, f, ensure_ascii=False, indent=2)
+        print(f"   [Queue] scripts_queue.json থেকে স্ক্রিপ্ট নেওয়া হয়েছে। বাকি আছে: {len(remaining_items)}টি")
+        return _build_package_from_dict(selected_item)
+
+    return None
+
+
+def _get_available_gemini_models(api_key: str) -> List[str]:
+    """Google API থেকে বর্তমান সচল Gemini মডেলগুলোর তালিকা সংগ্রহ করে"""
+    url = f"https://generativelanguage.googleapis.com/v1beta/models?key={api_key}"
+    try:
+        res = requests.get(url, timeout=15)
+        if res.status_code == 200:
+            models = res.json().get("models", [])
+            valid = [
+                m["name"]
+                for m in models
+                if "generateContent" in m.get("supportedGenerationMethods", [])
+                and "gemini" in m.get("name", "").lower()
+                and "embedding" not in m.get("name", "").lower()
+                and "vision" not in m.get("name", "").lower()
+            ]
+            flash_models = [m for m in valid if "flash" in m.lower()]
+            other_models = [m for m in valid if "flash" not in m.lower()]
+            ordered = flash_models + other_models
+            if ordered:
+                return ordered
+    except Exception:
+        pass
+
+    return [
+        "models/gemini-2.5-flash-preview-05-20",
+        "models/gemini-2.0-flash",
+        "models/gemini-1.5-flash",
+    ]
+
+
+def generate_researched_package(past_topics: List[str]) -> ResearchedContentPackage:
+    queued_pkg = _pop_from_queue(past_topics)
+    if queued_pkg is not None:
+        return queued_pkg
+
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        raise RuntimeError("scripts_queue.json খালি এবং GEMINI_API_KEY পাওয়া যায়নি।")
+
+    print("   [Gemini Backup] কিউ খালি থাকায় Gemini API থেকে নতুন স্ক্রিপ্ট তৈরি হচ্ছে...")
+    avoid_list = ", ".join(past_topics[-30:]) if past_topics else "none"
 
     prompt = f"""
-You are the lead psychology scriptwriter and 2D animation director for "Mind Decode Bangla" (@mind_decode_bangla),
-a dark-aesthetic psychology YouTube Shorts & Facebook Reels channel for viewers in Bangladesh.
+তুমি 'Mind Decode Bangla' চ্যানেলের প্রধান বাংলা হিউম্যান সাইকোলজি গবেষক ও স্ক্রিপ্টরাইটার।
+একটি সম্পূর্ণ নতুন ও ইউনিক হিউম্যান সাইকোলজি ফ্যাক্ট বা বায়াস নিয়ে ৮ দৃশ্যের শর্ট ভিডিওর স্ক্রিপ্ট তৈরি করো।
 
-Create ONE high-retention, deeply relatable psychological insight video package (45 to 55 seconds total, broken into 6 or 7 scenes).
-Avoid repeating any of these past topic slugs: [{avoid_list}]
+নিয়মাবলী:
+1. নিচের ব্যবহৃত টপিকগুলো বাদ দিয়ে নতুন বিষয় বেছে নাও: [{avoid_list}]
+2. সব সংখ্যা অঙ্কে না লিখে বাংলা কথায় লিখবে (যেমন: "পাঁচ", "সত্তর শতাংশ")।
+3. প্রশ্নবোধক বাক্যের শেষে অবশ্যই '?' দিবে।
+4. ঠিক ৮টি দৃশ্য (scenes) থাকবে। প্রতিটি দৃশ্যে:
+   - narration: ১০-১৪ শব্দের স্বাভাবিক, শান্ত ও আবেগপূর্ণ বাংলা বাক্য।
+   - screen_text: ৪-৬ শব্দের পাঞ্চি বাংলা সাবটাইটেল।
+   - pixabay_query: Pixabay স্টক ভিডিও সার্চের জন্য ২-৪ শব্দের বাস্তব ইংরেজি কিওয়ার্ড (যেমন: "man sitting alone dark room")।
 
-Strict Rules:
-1. Scene 1 MUST be a 3-second scroll-stopping psychological hook in natural, conversational Bengali.
-2. Each scene's "narration" must be 1 to 2 punchy Bengali sentences tailored for natural voiceover (bn-BD-NabanitaNeural).
-3. Each scene's "screen_text" must be a crisp, high-impact Bengali subtitle line (max 10-12 words) summarizing that scene.
-4. The final scene MUST end with a thought-provoking question in Bengali to trigger comments.
-5. Each scene's "visual_prompt" must describe in English what our minimalist hooded 2D character is doing or feeling in that scene (purely visual, NO text/letters inside image).
-6. Return ONLY valid JSON matching this exact schema:
-
+শুধুমাত্র নিচের JSON ফরম্যাটে উত্তর দাও (অতিরিক্ত কোনো লেখা নয়):
 {{
-  "topic_slug": "unique-english-kebab-case-slug",
-  "yt_title": "Catchy Bengali YouTube Shorts title with 1-2 emojis #Shorts",
-  "yt_description": "Engaging 2-line Bengali description for Mind Decode Bangla + hashtags (#PsychologyBangla #MindDecodeBangla #BanglaMotivation #Shorts)",
-  "yt_tags": ["bangla psychology", "mind decode bangla", "human psychology bangla", "overthinking bangla", "shorts"],
-  "fb_caption": "Engaging Bengali Facebook Reels caption with call-to-action & hashtags",
-  "x_post": "Ready-to-post English/Bangla X caption with 3 hashtags",
-  "thumbnail_hook": "3 to 4 bold Bengali words for cover thumbnail",
+  "topic_slug": "unique-english-slug",
+  "research_insight": "গবেষক ও মূল সাইকোলজি তথ্যের সংক্ষিপ্ত বিবরণ",
+  "thumbnail_hook": "৩-৪ শব্দের বাংলা হুক",
+  "yt_title": "কৌতূহল জাগানো বাংলা টাইটেল #Shorts",
+  "yt_description": "বাংলা ডেসক্রিপশন ও হ্যাশট্যাগ (#MindDecodeBangla #BanglaPsychology #Shorts)",
+  "yt_tags": ["Bangla Psychology", "Human Behavior", "Mind Decode Bangla", "Shorts"],
+  "fb_caption": "ফেসবুক পেইজের জন্য বাংলা ক্যাপশন ও প্রশ্ন #MindDecodeBangla",
+  "x_post": "সর্বোচ্চ ২০০ অক্ষরের বাংলা পোস্ট #MindDecodeBangla",
   "scenes": [
     {{
-      "narration": "আপনি কি জানেন, যে মানুষটা সবার সামনে সবচেয়ে বেশি হাসে, রাত হলে সে-ই সবচেয়ে বেশি একা হয়ে যায়?",
-      "screen_text": "সবার সামনে হাসিমুখ, কিন্তু ভেতরে গভীর একাকীত্ব!",
-      "visual_prompt": "hooded minimalist character wearing a bright smiling mask in a crowd while dark shadows surround them, melancholic mood",
-      "motion": "zoom_in"
+      "narration": "বাংলা ন্যারেশন",
+      "screen_text": "বাংলা সাবটাইটেল",
+      "pixabay_query": "english visual query"
     }}
   ]
 }}
-
-Allowed values for "motion": "zoom_in", "zoom_out", "pan_right", "pan_left".
 """
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
-    payload = {
-        "contents": [{"parts": [{"text": prompt}]}],
-        "generationConfig": {
-            "temperature": 0.85,
-            "responseMimeType": "application/json",
-        },
-    }
+    models_to_try = _get_available_gemini_models(api_key)
+    last_error = "কোনো সচল মডেল পাওয়া যায়নি"
 
-    last_error = None
-    allowed_motions = ["zoom_in", "zoom_out", "pan_right", "pan_left"]
-
-    for attempt in range(3):
+    for model_name in models_to_try:
+        endpoint = f"https://generativelanguage.googleapis.com/v1beta/{model_name}:generateContent?key={api_key}"
+        payload = {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {
+                "temperature": 0.8,
+                "responseMimeType": "application/json",
+            },
+        }
         try:
-            resp = requests.post(url, json=payload, timeout=45)
-            resp.raise_for_status()
-            raw_text = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
-            data = _clean_json_response(raw_text)
+            res = requests.post(endpoint, json=payload, timeout=45)
+            if res.status_code != 200:
+                last_error = f"{res.status_code} ({model_name}): {res.text[:200]}"
+                continue
 
-            scenes = []
-            for idx, s in enumerate(data.get("scenes", [])):
-                base_visual = s.get("visual_prompt", "hooded minimalist character thinking deeply in dark room")
-                full_prompt = f"{base_visual}, {CONSISTENT_CHARACTER_STYLE}"
-                motion = s.get("motion")
-                if motion not in allowed_motions:
-                    motion = allowed_motions[idx % len(allowed_motions)]
+            result_json = res.json()
+            raw_text = result_json["candidates"][0]["content"]["parts"][0]["text"]
+            match = re.search(r"\{.*\}", raw_text, re.DOTALL)
+            clean_json_str = match.group(0) if match else raw_text
+            parsed = json.loads(clean_json_str)
 
-                scenes.append(
-                    SceneItem(
-                        narration=s.get("narration", "").strip(),
-                        screen_text=s.get("screen_text", s.get("narration", "")).strip(),
-                        visual_prompt=full_prompt,
-                        motion=motion,
-                    )
-                )
-
-            if len(scenes) < 3:
-                raise ValueError("স্ক্রিপ্টে পর্যাপ্ত দৃশ্য জেনারেট হয়নি।")
-
-            return ResearchedContentPackage(
-                topic_slug=data.get("topic_slug", f"psych-topic-{int(time.time())}"),
-                yt_title=data.get("yt_title", "মনের অজানা সাইকোলজি #Shorts"),
-                yt_description=data.get("yt_description", "Mind Decode Bangla - মানব মনের গভীর রহস্য। #Shorts"),
-                yt_tags=data.get("yt_tags", ["bangla psychology", "mind decode bangla"]),
-                fb_caption=data.get("fb_caption", data.get("yt_title", "")),
-                x_post=data.get("x_post", data.get("yt_title", "")),
-                thumbnail_hook=data.get("thumbnail_hook", "মনের গোপন রহস্য"),
-                scenes=scenes,
-            )
-        except Exception as exc:
-            last_error = exc
-            time.sleep(3 * (attempt + 1))
+            if parsed.get("scenes") and len(parsed["scenes"]) >= 4:
+                return _build_package_from_dict(parsed)
+            last_error = f"{model_name} থেকে অসম্পূর্ণ দৃশ্য পাওয়া গেছে"
+        except Exception as e:
+            last_error = str(e)
 
     raise RuntimeError(f"Gemini থেকে স্ক্রিপ্ট জেনারেট করতে ব্যর্থ হয়েছে: {last_error}")
