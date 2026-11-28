@@ -13,11 +13,6 @@ class SceneItem:
     narration: str
     screen_text: str
     pixabay_query: str
-    animation_prompt: str = ""
-    illustration_prompt: str = ""
-
-    def __getattr__(self, name: str):
-        return self.pixabay_query
 
 
 @dataclass
@@ -32,24 +27,17 @@ class ResearchedContentPackage:
     x_post: str = ""
     scenes: List[SceneItem] = field(default_factory=list)
 
-    def __getattr__(self, name: str):
-        return self.thumbnail_hook
-
 
 def _build_package_from_dict(data: dict) -> ResearchedContentPackage:
     raw_scenes = data.get("scenes", [])
-    scenes = []
-    for s in raw_scenes:
-        q = s.get("pixabay_query", "person thinking alone dark moody")
-        scenes.append(
-            SceneItem(
-                narration=s.get("narration", ""),
-                screen_text=s.get("screen_text", ""),
-                pixabay_query=q,
-                animation_prompt=s.get("animation_prompt", q),
-                illustration_prompt=s.get("illustration_prompt", q),
-            )
+    scenes = [
+        SceneItem(
+            narration=s.get("narration", ""),
+            screen_text=s.get("screen_text", ""),
+            pixabay_query=s.get("pixabay_query", "3d render abstract dark"),
         )
+        for s in raw_scenes
+    ]
 
     return ResearchedContentPackage(
         topic_slug=data.get("topic_slug", "human-psychology-fact"),
@@ -98,7 +86,6 @@ def _pop_from_queue(past_topics: List[str]) -> Optional[ResearchedContentPackage
 
 
 def _get_available_gemini_models(api_key: str) -> List[str]:
-    """Google API থেকে বর্তমান সচল Gemini মডেলগুলোর তালিকা সংগ্রহ করে"""
     url = f"https://generativelanguage.googleapis.com/v1beta/models?key={api_key}"
     try:
         res = requests.get(url, timeout=15)
@@ -136,7 +123,7 @@ def generate_researched_package(past_topics: List[str]) -> ResearchedContentPack
     if not api_key:
         raise RuntimeError("scripts_queue.json খালি এবং GEMINI_API_KEY পাওয়া যায়নি।")
 
-    print("   [Gemini Backup] কিউ খালি থাকায় Gemini API থেকে নতুন স্ক্রিপ্ট তৈরি হচ্ছে...")
+    print("   [Gemini Backup] কিউ খালি থাকায় Gemini API থেকে নতুন 3D স্ক্রিপ্ট তৈরি হচ্ছে...")
     avoid_list = ", ".join(past_topics[-30:]) if past_topics else "none"
 
     prompt = f"""
@@ -150,7 +137,7 @@ def generate_researched_package(past_topics: List[str]) -> ResearchedContentPack
 4. ঠিক ৮টি দৃশ্য (scenes) থাকবে। প্রতিটি দৃশ্যে:
    - narration: ১০-১৪ শব্দের স্বাভাবিক, শান্ত ও আবেগপূর্ণ বাংলা বাক্য।
    - screen_text: ৪-৬ শব্দের পাঞ্চি বাংলা সাবটাইটেল।
-   - pixabay_query: Pixabay স্টক ভিডিও সার্চের জন্য ২-৪ শব্দের বাস্তব ইংরেজি কিওয়ার্ড (যেমন: "man sitting alone dark room")।
+   - pixabay_query: Pixabay থেকে 3D অ্যানিমেশন ভিডিও খোঁজার জন্য '3d' যুক্ত ২-৪ শব্দের ইংরেজি কিওয়ার্ড (যেমন: "3d glowing brain", "3d dark room", "3d hourglass", "3d chess pieces", "3d abstract waves")।
 
 শুধুমাত্র নিচের JSON ফরম্যাটে উত্তর দাও (অতিরিক্ত কোনো লেখা নয়):
 {{
@@ -166,7 +153,7 @@ def generate_researched_package(past_topics: List[str]) -> ResearchedContentPack
     {{
       "narration": "বাংলা ন্যারেশন",
       "screen_text": "বাংলা সাবটাইটেল",
-      "pixabay_query": "english visual query"
+      "pixabay_query": "3d visual query"
     }}
   ]
 }}
