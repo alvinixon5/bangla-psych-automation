@@ -2,7 +2,6 @@ import os
 import json
 import asyncio
 import random
-import urllib.parse
 import subprocess
 import textwrap
 import requests
@@ -19,7 +18,6 @@ FONT_PATH = "fonts/BanglaBold.ttf"
 
 VOICE = "bn-BD-NabanitaNeural"
 BASE_PITCH = "-4Hz"
-RENDER_FPS = 24
 
 VARIANTS = {
     "vertical_9x16": (1080, 1920, "video_yt.mp4"),   # YouTube Shorts
@@ -57,91 +55,86 @@ async def generate_scene_voiceover(text: str, output_mp3: str, scene_index: int,
     await communicate.save(output_mp3)
 
 
-def render_fallback_character_art(output_png: str, scene_index: int):
-    """বাহ্যিক ইমেজ API সাময়িকভাবে ব্যস্ত থাকলে ডার্ক-সাইকোলজি ভেক্টর আর্ট তৈরি করে"""
-    w, h = 1080, 1920
-    img = Image.new("RGB", (w, h), (11, 15, 25))
-    draw = ImageDraw.Draw(img)
+def sanitize_and_verify_video(raw_path: str, clean_path: str) -> bool:
+    """Pixabay 3D ভিডিওর মেটাডাটা পরিষ্কার করে MoviePy-উপযোগী স্ট্যান্ডার্ড MP4 বানায়"""
+    try:
+        cmd = [
+            "ffmpeg", "-y",
+            "-i", raw_path,
+            "-map", "0:v:0",
+            "-an",
+            "-c:v", "libx264",
+            "-preset", "ultrafast",
+            "-crf", "22",
+            "-pix_fmt", "yuv420p",
+            "-r", "24",
+            "-movflags", "+faststart",
+            clean_path,
+        ]
+        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-    accent_palettes = [
-        ((56, 189, 248), (19, 42, 70)),    # Cyan glow
-        ((251, 191, 36), (55, 40, 20)),    # Warm amber glow
-        ((167, 139, 250), (38, 28, 68)),   # Soft violet glow
+        test_clip = VideoFileClip(clean_path)
+        dur = test_clip.duration
+        test_clip.close()
+        return bool(dur and dur > 1.0)
+    except Exception:
+        return False
+
+
+def download_3d_animation_video(query: str, output_path: str, used_ids: set) -> bool:
+    """Pixabay থেকে শুধুমাত্র আসল 3D রেন্ডার ও 3D অ্যানিমেশন ভিডিও সংগ্রহ করে"""
+    api_key = os.getenv("PIXABAY_API_KEY")
+    if not api_key:
+        return False
+
+    temp_dl = output_path + ".dl.mp4"
+    clean_q = query.lower().replace("3d", "").strip()
+
+    search_queries = [
+        f"3d {clean_q}",
+        f"3d animation {clean_q}",
+        "3d render abstract dark",
+        "3d brain neural network",
+        "3d geometric dark background",
+        "3d silhouette dark room",
     ]
-    accent, ring_base = accent_palettes[scene_index % len(accent_palettes)]
 
-    cx, cy = w // 2, int(h * 0.42)
-    for step in range(4, 0, -1):
-        radius = step * 115
-        shade = tuple(min(255, int(c * (1.3 - step * 0.15))) for c in ring_base)
-        draw.ellipse((cx - radius, cy - radius, cx + radius, cy + radius), fill=shade)
-
-    # মিনিমালিস্ট হুডেড ক্যারেক্টার সিলুয়েট
-    draw.ellipse((cx - 115, cy - 155, cx + 115, cy + 75), fill=(7, 10, 18), outline=accent, width=4)
-    draw.pieslice((cx - 220, cy + 45, cx + 220, cy + 430), start=180, end=360, fill=(7, 10, 18), outline=accent, width=4)
-
-    # সূক্ষ্ম গ্লোয়িং চোখ
-    draw.ellipse((cx - 48, cy - 45, cx - 24, cy - 33), fill=accent)
-    draw.ellipse((cx + 24, cy - 45, cx + 48, cy - 33), fill=accent)
-
-    img.save(output_png, "PNG")
-
-
-def generate_scene_illustration(visual_prompt: str, output_png: str, scene_index: int):
-    """প্রতিটি দৃশ্যের জন্য ফ্রি Flux API দিয়ে কাস্টম ২ডি ক্যারেক্টার ইলাস্ট্রেশন তৈরি করে"""
-    encoded_prompt = urllib.parse.quote(visual_prompt)
-    seed = random.randint(1000, 999999)
-    url = (
-        f"https://image.pollinations.ai/prompt/{encoded_prompt}"
-        f"?width=1080&height=1920&nologo=true&seed={seed}&model=flux"
-    )
-
-    for attempt in range(2):
+    for q in search_queries:
+        url = "https://pixabay.com/api/videos/"
+        params = {
+            "key": api_key,
+            "q": q,
+            "per_page": 12,
+            "safesearch": "true",
+        }
         try:
-            resp = requests.get(url, timeout=45)
-            if resp.status_code == 200 and len(resp.content) > 15000:
-                with open(output_png, "wb") as f:
-                    f.write(resp.content)
-                with Image.open(output_png) as im:
-                    im = im.convert("RGB").resize((1080, 1920), Image.Resampling.LANCZOS)
-                    im.save(output_png, "PNG")
-                return
+            res = requests.get(url, params=params, timeout=20).json()
+            hits = res.get("hits", [])
+            random.shuffle(hits)
+            for hit in hits:
+                vid_id = hit.get("id")
+                if vid_id in used_ids:
+                    continue
+                videos = hit.get("videos", {})
+                video_info = videos.get("medium") or videos.get("large") or videos.get("small")
+                if video_info and video_info.get("url"):
+                    vid_url = video_info["url"]
+                    r = requests.get(vid_url, stream=True, timeout=30)
+                    if r.status_code == 200:
+                        with open(temp_dl, "wb") as f:
+                            for chunk in r.iter_content(chunk_size=8192):
+                                f.write(chunk)
+
+                        is_valid = sanitize_and_verify_video(temp_dl, output_path)
+                        if os.path.exists(temp_dl):
+                            os.remove(temp_dl)
+
+                        if is_valid:
+                            used_ids.add(vid_id)
+                            return True
         except Exception as e:
-            print(f"   [Illustration Retry {attempt + 1}] দৃশ্য {scene_index + 1}: {e}")
-
-    render_fallback_character_art(output_png, scene_index)
-
-
-def animate_illustration_to_clip(image_png: str, output_mp4: str, duration: float, motion: str) -> bool:
-    """স্থির ২ডি ইলাস্ট্রেশনে স্মুথ জুম-ইন, জুম-আউট বা প্যান এনিমেশন যোগ করে MP4 তৈরি করে"""
-    total_frames = max(int(round(duration * RENDER_FPS)), RENDER_FPS * 2)
-
-    if motion == "zoom_out":
-        zp = "z='if(eq(on,1),1.14,max(1.00,zoom-0.0006))':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
-    elif motion == "pan_right":
-        zp = f"z='1.10':x='(iw-iw/zoom)*(on/{total_frames})':y='ih/2-(ih/zoom/2)'"
-    elif motion == "pan_left":
-        zp = f"z='1.10':x='(iw-iw/zoom)*(1-on/{total_frames})':y='ih/2-(ih/zoom/2)'"
-    else:  # zoom_in
-        zp = "z='min(zoom+0.0006,1.14)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
-
-    vf = f"scale=2160:3840,zoompan={zp}:d={total_frames}:s=1080x1920:fps={RENDER_FPS}"
-
-    cmd = [
-        "ffmpeg", "-y",
-        "-i", image_png,
-        "-vf", vf,
-        "-frames:v", str(total_frames),
-        "-c:v", "libx264",
-        "-preset", "veryfast",
-        "-crf", "21",
-        "-pix_fmt", "yuv420p",
-        "-r", str(RENDER_FPS),
-        "-movflags", "+faststart",
-        output_mp4,
-    ]
-    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    return os.path.exists(output_mp4)
+            print(f"   [Pixabay 3D Warning] '{q}' সার্চে সমস্যা: {e}")
+    return False
 
 
 def download_lofi_bgm(output_path: str) -> bool:
@@ -161,27 +154,31 @@ def download_lofi_bgm(output_path: str) -> bool:
 
 
 def get_bengali_font(size: int):
-    font_paths = [
-        FONT_PATH,
-        "/usr/share/fonts/truetype/noto/NotoSansBengali-Bold.ttf",
-        "/usr/share/fonts/truetype/noto/NotoSansBengali-Regular.ttf",
+    if os.path.exists(FONT_PATH):
+        return ImageFont.truetype(FONT_PATH, size)
+    fallback_fonts = [
         "/usr/share/fonts/truetype/lohit-bengali/Lohit-Bengali.ttf",
+        "/usr/share/fonts/truetype/noto/NotoSansBengali-Bold.ttf",
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
     ]
-    for fp in font_paths:
+    for fp in fallback_fonts:
         if os.path.exists(fp):
-            try:
-                return ImageFont.truetype(fp, size, layout_engine=ImageFont.Layout.RAQM)
-            except Exception:
-                return ImageFont.truetype(fp, size)
+            return ImageFont.truetype(fp, size)
     return ImageFont.load_default()
 
 
-def create_subtitle_overlay(text: str, width: int, height: int, output_png: str):
+def create_cinematic_subtitle_overlay(text: str, width: int, height: int, output_png: str):
+    """3D ভিডিওর ওপর ডার্ক গ্রেডিয়েন্ট ভিনিয়েট এবং আধুনিক গ্লাস-কার্ড বাংলা সাবটাইটেল তৈরি করে"""
     img = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
-    font_size = int(width * 0.050)
+    # নিচের দিকে হালকা ডার্ক শ্যাডো গ্রেডিয়েন্ট যাতে 3D ব্যাকগ্রাউন্ডের ওপর লেখা স্পষ্ট পড়া যায়
+    grad_start = int(height * 0.55)
+    for y in range(grad_start, height):
+        alpha = int(((y - grad_start) / (height - grad_start)) * 175)
+        draw.line([(0, y), (width, y)], fill=(8, 10, 16, alpha))
+
+    font_size = int(width * 0.052)
     font = get_bengali_font(font_size)
 
     wrapped_lines = textwrap.wrap(text, width=22)
@@ -197,7 +194,7 @@ def create_subtitle_overlay(text: str, width: int, height: int, output_png: str)
         max_line_w = max(max_line_w, w)
         line_heights.append(h)
 
-    line_spacing = int(font_size * 0.35)
+    line_spacing = int(font_size * 0.36)
     total_text_h = sum(line_heights) + line_spacing * (len(wrapped_lines) - 1)
 
     pad_x = int(width * 0.06)
@@ -206,15 +203,15 @@ def create_subtitle_overlay(text: str, width: int, height: int, output_png: str)
     box_h = total_text_h + pad_y * 2
 
     box_x1 = (width - box_w) // 2
-    box_y1 = int(height * 0.72) - (box_h // 2)
+    box_y1 = int(height * 0.74) - (box_h // 2)
     box_x2 = box_x1 + box_w
     box_y2 = box_y1 + box_h
 
     draw.rounded_rectangle(
         [box_x1, box_y1, box_x2, box_y2],
-        radius=24,
-        fill=(11, 15, 25, 210),
-        outline=(56, 189, 248, 120),
+        radius=22,
+        fill=(10, 12, 18, 185),
+        outline=(255, 215, 100, 70),
         width=2,
     )
 
@@ -223,6 +220,7 @@ def create_subtitle_overlay(text: str, width: int, height: int, output_png: str)
         bbox = draw.textbbox((0, 0), line, font=font)
         w = bbox[2] - bbox[0]
         x = (width - w) // 2
+        draw.text((x + 2, current_y + 2), line, font=font, fill=(0, 0, 0, 210))
         draw.text((x, current_y), line, font=font, fill=(255, 255, 255, 255))
         current_y += line_heights[idx] + line_spacing
 
@@ -230,7 +228,7 @@ def create_subtitle_overlay(text: str, width: int, height: int, output_png: str)
 
 
 def create_thumbnail(hook_text: str, bg_video_path: str, output_jpg: str, width: int = 1080, height: int = 1920):
-    frame_img = Image.new("RGB", (width, height), (18, 20, 28))
+    frame_img = Image.new("RGB", (width, height), (14, 16, 24))
 
     if bg_video_path and os.path.exists(bg_video_path):
         try:
@@ -264,7 +262,7 @@ def create_thumbnail(hook_text: str, bg_video_path: str, output_jpg: str, width:
         w = bbox[2] - bbox[0]
         h = bbox[3] - bbox[1]
         x = (width - w) // 2
-        draw.text((x + 4, y_start + 4), line, font=font, fill=(0, 0, 0, 225))
+        draw.text((x + 4, y_start + 4), line, font=font, fill=(0, 0, 0, 230))
         draw.text((x, y_start), line, font=font, fill=(255, 220, 90, 255))
         y_start += h + 28
 
@@ -328,27 +326,26 @@ def main():
     history = load_history()
     past_topics = history.get("topics", [])
 
-    print("১. সাইকোলজি স্ক্রিপ্ট ও এনিমেশন প্রম্পট তৈরি হচ্ছে...")
+    print("১. সাইকোলজি স্ক্রিপ্ট সংগ্রহ করা হচ্ছে...")
     pkg: ResearchedContentPackage = generate_researched_package(past_topics)
     print(f"   নির্বাচিত টপিক: {pkg.topic_slug} ({pkg.yt_title})")
 
-    print("২. প্রতিটি দৃশ্যের ডাইনামিক ভয়েসওভার ও কাস্টম ২ডি এনিমেশন তৈরি হচ্ছে...")
+    print("২. প্রতিটি দৃশ্যের জন্য ডাইনামিক ভয়েসওভার ও 3D অ্যানিমেশন সংগ্রহ হচ্ছে...")
+    used_video_ids = set()
     scene_assets = []
     total_scenes = len(pkg.scenes)
 
     for idx, scene in enumerate(pkg.scenes):
         scene_mp3 = os.path.join(TEMP_DIR, f"scene_{idx}.mp3")
-        scene_png = os.path.join(TEMP_DIR, f"art_{idx}.png")
         scene_mp4 = os.path.join(TEMP_DIR, f"raw_{idx}.mp4")
 
         asyncio.run(generate_scene_voiceover(scene.narration, scene_mp3, idx, total_scenes))
         audio_clip = AudioFileClip(scene_mp3)
-        # দৃশ্যের শেষে ০.৪ সেকেন্ড প্রাকৃতিক বিরতি (pause) যোগ করা হচ্ছে
         padded_duration = audio_clip.duration + 0.4
-        audio_clip.close()
 
-        generate_scene_illustration(scene.visual_prompt, scene_png, idx)
-        animate_illustration_to_clip(scene_png, scene_mp4, padded_duration, scene.motion)
+        downloaded = download_3d_animation_video(scene.pixabay_query, scene_mp4, used_video_ids)
+        if not downloaded:
+            raise RuntimeError(f"দৃশ্য {idx + 1}-এর জন্য কোনো 3D অ্যানিমেশন ভিডিও পাওয়া যায়নি।")
 
         scene_assets.append({
             "index": idx,
@@ -357,8 +354,9 @@ def main():
             "duration": padded_duration,
             "screen_text": scene.screen_text,
         })
+        audio_clip.close()
 
-    print("৩. কাস্টম এনিমেটেড থাম্বনেইল এবং BGM প্রস্তুত হচ্ছে...")
+    print("৩. কাস্টম থাম্বনেইল এবং BGM প্রস্তুত হচ্ছে...")
     thumb_yt_path = os.path.join(TEMP_DIR, "thumb_yt.jpg")
     create_thumbnail(pkg.thumbnail_hook, scene_assets[0]["mp4"], thumb_yt_path, 1080, 1920)
 
@@ -367,13 +365,13 @@ def main():
 
     rendered_files = {"thumb_yt": thumb_yt_path}
 
-    print("৪. ভিডিও রেন্ডারিং ও -14 LUFS অডিও মিক্সিং শুরু হচ্ছে...")
+    print("৪. 3D ভিডিও রেন্ডারিং ও -14 LUFS অডিও মিক্সিং শুরু হচ্ছে...")
     for variant_key, (w, h, filename) in VARIANTS.items():
         print(f"   -> {variant_key} ({w}x{h}) তৈরি হচ্ছে...")
         clips_to_concat = []
         opened_resources = []
 
-        # ভিডিওর একদম শুরুতে ০.৪ সেকেন্ডের কাস্টম থাম্বনেইল কভার কার্ড যুক্ত করা হচ্ছে
+        # ভিডিওর শুরুতে ০.৪ সেকেন্ডের কাস্টম থাম্বনেইল কভার কার্ড যুক্ত করা হচ্ছে
         variant_thumb = os.path.join(TEMP_DIR, f"thumb_{variant_key}.jpg")
         create_thumbnail(pkg.thumbnail_hook, scene_assets[0]["mp4"], variant_thumb, w, h)
         intro_thumb_clip = ImageClip(variant_thumb).with_duration(0.4)
@@ -388,7 +386,7 @@ def main():
             fitted_v = fit_clip_to_canvas(v_clip, w, h, dur)
 
             sub_png = os.path.join(TEMP_DIR, f"sub_{variant_key}_{idx}.png")
-            create_subtitle_overlay(asset["screen_text"], w, h, sub_png)
+            create_cinematic_subtitle_overlay(asset["screen_text"], w, h, sub_png)
             sub_clip = ImageClip(sub_png).with_duration(dur)
 
             a_clip = AudioFileClip(asset["mp3"])
@@ -403,7 +401,7 @@ def main():
 
         final_raw.write_videofile(
             pre_bgm_path,
-            fps=RENDER_FPS,
+            fps=24,
             codec="libx264",
             audio_codec="aac",
             preset="veryfast",
